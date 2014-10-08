@@ -1,0 +1,9 @@
+{
+"name": "lab2 SD",
+"version": "0.0.1",
+"description": "Juego-chat multisala",
+"dependencies": {
+"socket.io": "1.1",
+"mime": "~1.2.7"
+	}
+}
