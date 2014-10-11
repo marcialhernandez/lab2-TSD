@@ -1,22 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="es">
 <html>
   <head>
-    <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' href='html/bootstrap/css/bootstrap.css'></link>
+    <link rel='stylesheet' href='html/bootstrap/css/settings.css'></link>
+    <h1> Sistemas distribuidos</h1>
+    <title>Juego-Chat SD</title>
 </head>
   <body>
+
+     <!-- Sidebar -->
+     <!-- http://startbootstrap.com/templates/simple-sidebar/ -->
+
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Informacion
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Conectados</a>
+                </li>
+                <li>
+                    <a href="#">Salas</a>
+                </li>
+                <li>
+                    <a href="#">....</a>
+                </li>
+                <li>
+                    <a href="#">....</a>
+                </li>
+                <li>
+                    <a href="#">....</a>
+                </li>
+                <li>
+                    <a href="#">....</a>
+                </li>
+
+
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+    <div class="panel panel-default"; id="chat">
+      <div class="panel-heading" id= "chatTittle">Mensajes</div>
+      <div class="panel-body">
     <ul id="mensajesPosteados"></ul>
-    <form action="">
-<input id="mensajeChat" autocomplete="off" /><button>Send</button>
+    </div>
+    </div>
+<form class="form-horizontal" action="" id="enviarMensajeChat">
+<input type="text" class="form-control" placeholder="Text input" id="mensajeChat" autocomplete="off" />
+<br/>
+<button class="btn btn-default">Send</button>
 </form>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
