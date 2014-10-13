@@ -1,64 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
 <html>
+
+<!--Inicio cabecera -->
   <head>
+    <!-- Especifico tipos y otros para tener compatibilidad en exploradores-->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--Importo plantillas de estilos -->
+    <!--Plantilla de Bootstrap -->
     <link rel='stylesheet' href='html/bootstrap/css/bootstrap.css'></link>
+    <!--Plantilla Normalizadora, que evita errores que tenia bootstrap con Mozilla-->
+    <link rel='stylesheet' href='html/bootstrap/css/normalize.css'></link>
+    <!--Plantilla que contiene las dimensiones y caracteristicas propias-->
     <link rel='stylesheet' href='html/bootstrap/css/settings.css'></link>
+
     <h1> Sistemas distribuidos</h1>
     <title>Juego-Chat SD</title>
+
 </head>
+<!--Fin cabecera -->
+
+<!-- Inicio cuerpo-->
+
   <body>
 
-     <!-- Sidebar -->
+     <!-- InicioSidebar -->
      <!-- http://startbootstrap.com/templates/simple-sidebar/ -->
-
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
-                <li class="sidebar-brand">
+                <!--Se comenta cabecera, no es necesaria-->
+                <!--<li class="sidebar-brand">
                     <a href="#">
                         Informacion
                     </a>
-                </li>
+                </li> -->
                 <li>
                     <a href="#">Conectados</a>
                 </li>
+                <!--Inicio Panel Conectados-->
+                <div class="panel panel-default" id="panelConectados">
+                    <!--<div class="panel-heading" id= "chatTittle">Mensajes</div>-->
+                    <div class="panel-body">
+                    </div>
+                </div>
+                <!--Fin Panel Conectados-->
+
                 <li>
                     <a href="#">Salas</a>
                 </li>
-                <li>
-                    <a href="#">....</a>
-                </li>
-                <li>
-                    <a href="#">....</a>
-                </li>
-                <li>
-                    <a href="#">....</a>
-                </li>
-                <li>
-                    <a href="#">....</a>
-                </li>
-
-
+                <!--Inicio Panel Salas-->
+                <div class="panel panel-default" id="panelSalas">
+                    <!--<div class="panel-heading" id= "chatTittle">Mensajes</div>-->
+                    <div class="panel-body">
+                    </div>
+                </div>
+                <!--Fin Panel Salas-->
             </ul>
         </div>
-        <!-- /#sidebar-wrapper -->
+        <!-- FinSidebar -->
 
-    <div class="panel panel-default"; id="chat">
+    <!-- Iniciotabla -->
+    <table class="table table-bordered" id="matrizJuego">
+        <!-- <thead> Identifican las columnas
+            <tr>
+                <th>Row1</th>
+                <th>Row2</th>
+                <th>Row3</th>
+                <th>Row4</th>
+            </tr>
+        </thead> -->
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- FinTabla-->
+
+    <!--Inicio panel chat -->
+    <div class="panel panel-default" id="chat">
       <div class="panel-heading" id= "chatTittle">Mensajes</div>
-      <div class="panel-body">
-    <ul id="mensajesPosteados"></ul>
+        <div class="panel-body">
+        <!--Aqui es donde se agregan los mensajes -->
+        <ul id="mensajesPosteados"></ul>
+        </div>
     </div>
-    </div>
-<form class="form-horizontal" action="" id="enviarMensajeChat">
-<input type="text" class="form-control" placeholder="Text input" id="mensajeChat" autocomplete="off" />
-<br/>
-<button class="btn btn-default">Send</button>
-</form>
-<script src="/socket.io/socket.io.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-  <script>
+    <!--Fin panel chat -->
+
+    <!--Inicio forma para entrada de texto -->
+
+    <form class="form-horizontal" action="" id="enviarMensajeChat">
+    <!--<fieldset> -->
+    <!-- <legend>Legend</legend>
+    <label>Label name</label> -->
+    <input type="text" placeholder="Type something…" id="mensajeChat" autocomplete="off">
+    <!-- <span class="help-block">Example block-level help text here.</span> -->
+    <br/>
+    <button type="submit" class="btn btn-default" id="botonEnviarMensaje">Submit</button>
+    <!-- </fieldset> -->
+    </form>
+    <!--Fin forma para entrada de texto -->
+
+    <!--Inicio Javascript incrustado -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
     var socket = io();
     $('form').submit(function(){
     socket.emit('chat message', $('#mensajeChat').val());
@@ -69,6 +233,9 @@
     $('#mensajesPosteados').append($('<li>').text(msg));
     });
   </script>
-  </body>
-</html>
+  <!--Fin Javascript incrustado -->
 
+  </body>
+<!-- Fin cuerpo-->
+
+</html>

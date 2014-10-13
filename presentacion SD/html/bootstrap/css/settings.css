@@ -1,24 +1,53 @@
 /*Margenes:
 top (arriba), bottom (abajo), left (izquierda) y right;*/
 
-#enviarMensajeChat
-{
-	margin-left: 260px;
-	-webkit-transition: all 0.5s ease;
-  	-moz-transition: all 0.5s ease;
-  	-o-transition: all 0.5s ease;
-  	transition: all 0.5s ease;
+#matrizJuego{
+    margin-left: 260px;
+    margin-right: 10px;
+    max-width: 70em;
+    max-height: 30em;
+
+    /*margin-bottom: -200px;*/
+
 }
+
+#mensajeChat{
+    max-width: 45em;
+    margin-left: 10px;
+
+}
+
+#panelConectados{
+    min-width: 17.8em;
+    max-width: 17.8em;
+    min-height: 8em;
+    max-height: 8em;
+}
+
+#panelSalas{
+    min-width: 17.8em;
+    max-width: 17.8em;
+    min-height: 8em;
+    max-height: 8em;
+}
+
+#botonEnviarMensaje
+{
+	margin-left: 650px;
+    margin-top: -150px;
+
+}
+
 
 #chat
 {
   min-height: 11em;
-  max-height: 11em;
-  max-width: 50em;
+  max-height:11em;
+  max-width: 45em;
   overflow: auto;
-  overflow-y: auto;
-  margin-top: 350px;
-  margin-left: 260px;
+  /*overflow-y: auto;
+  margin-top: 350px;*/
+  margin-left: 10px;
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
@@ -58,7 +87,8 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
     position: fixed;
     left: 250px;
     width: 0;
-    height: 100%;
+    height: 370px;
+    /*height: 100%;*/
     margin-left: -250px;
     overflow-y: auto;
     background: #000;
