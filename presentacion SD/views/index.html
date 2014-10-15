@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<html>
+
+<!--Inicio cabecera -->
+  <head>
+    <!-- Especifico tipos y otros para tener compatibilidad en exploradores-->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--Importo plantillas de estilos -->
+    <!--Plantilla de Bootstrap -->
+    <link rel='stylesheet' href='bootstrap/css/bootstrap.css'></link>
+    <link rel='stylesheet' href='views/bootstrap/css/bootstrap.css'></link>
+    <!--Plantilla Normalizadora, que evita errores que tenia bootstrap con Mozilla-->
+    <link rel='stylesheet' href='bootstrap/css/normalize.css'></link>
+    <link rel='stylesheet' href='views/bootstrap/css/normalize.css'></link>
+    <!--Plantilla que contiene las dimensiones y caracteristicas propias-->
+    <link rel='stylesheet' href='bootstrap/css/settings.css'></link>
+    <link rel='stylesheet' href='views/bootstrap/css/settings.css'></link>
+    <!--Plantilla que contiene las dimensiones y caracteristicas propias-->
+    <link rel='stylesheet' href='bootstrap/css/estiloLogin.css'></link>
+    <link rel='stylesheet' href='views/bootstrap/css/estiloLogin.css'></link>
+
+    <title>Juego-Chat SD</title>
+
+</head>
+<!--Fin cabecera -->
+
+<!-- Inicio cuerpo-->
+
+<body >
+
+<paginaLogin id="loginListo">
+
+<div class="container-full">
+
+      <div class="row">
+       
+        <div class="col-lg-12 text-center v-center">
+          
+          <h1>Sistemas Distribuidos</h1>
+          <p class="lead">Un juego simple usando NodeJs y Bootstrap 3</p>
+          
+          <br><br><br>
+          
+          <form class="col-lg-12" id="ingresandoNickName">
+            <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
+            <input class="form-control input-lg" title="Don't worry. We hate spam, and will not share your email with anyone." placeholder="Enter your NickName" type="text" id="nickname">
+              <span class="input-group-btn"><button class="btn btn-lg btn-default" type="button" id="botonOK">OK</button></span>
+            </div>
+          </form>
+        </div>
+        
+      </div> 
+  
+    <br><br><br><br><br>
+
+</div>
+
+<div class="container">
+  
+    <hr>
+  
+    <div class="row">
+        <div class="col-lg-12">
+        <br><br>
+          <p class="pull-right"><a href="http://www.bootply.com">Template from Bootply</a> &nbsp; ©Copyright 2013 ACME<sup>TM</sup> Brand.</p>
+        <br><br>
+        </div>
+    </div>
+</div>
+</paginaLogin>
+
+    <!-- Inicio cuerpo de la pagina principal del juego -->
+    <paginaJuego id="juegoListo">
+
+            <h1> Sistemas distribuidos</h1>
+     <!-- InicioSidebar -->
+     <!-- http://startbootstrap.com/templates/simple-sidebar/ -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <!--Se comenta cabecera, no es necesaria-->
+                <!--<li class="sidebar-brand">
+                    <a href="#">
+                        Informacion
+                    </a>
+                </li> -->
+                <li>
+                    <a href="#">Conectados</a>
+                </li>
+                <!--Inicio Panel Conectados-->
+                <div class="panel panel-default" id="panelConectados">
+                    <!--<div class="panel-heading" id= "chatTittle">Mensajes</div>-->
+                    <div class="panel-body">
+                    </div>
+                </div>
+                <!--Fin Panel Conectados-->
+
+                <li>
+                    <a href="#">Salas</a>
+                </li>
+                <!--Inicio Panel Salas-->
+                <div class="panel panel-default" id="panelSalas">
+                    <!--<div class="panel-heading" id= "chatTittle">Mensajes</div>-->
+                    <div class="panel-body">
+                    </div>
+                </div>
+                <!--Fin Panel Salas-->
+            </ul>
+        </div>
+        <!-- FinSidebar -->
+
+    <!-- Iniciotabla -->
+    <table class="table table-bordered" id="matrizJuego">
+        <!-- <thead> Identifican las columnas
+            <tr>
+                <th>Row1</th>
+                <th>Row2</th>
+                <th>Row3</th>
+                <th>Row4</th>
+            </tr>
+        </thead> -->
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- FinTabla-->
+
+    <!--Inicio panel chat -->
+    <div class="panel panel-default" id="chat">
+      <div class="panel-heading" id= "chatTittle">Mensajes</div>
+        <div class="panel-body">
+        <!--Aqui es donde se agregan los mensajes -->
+        <ul id="mensajesPosteados"></ul>
+        </div>
+    </div>
+    <!--Fin panel chat -->
+
+    <!--Inicio forma para entrada de texto -->
+
+    <form class="form-horizontal" action="" id="enviarMensajeChat" autocomplete="off">
+    <!--<fieldset> -->
+    <!-- <legend>Legend</legend>
+    <label>Label name</label> -->
+    <input type="text" placeholder="Type something…" id="mensajeChat" >
+    <!-- <span class="help-block">Example block-level help text here.</span> -->
+    <br/>
+    <button type="submit" class="btn btn-default" id="botonEnviarMensaje">Submit</button>
+    <!-- </fieldset> -->
+    </form>
+    <!--Fin forma para entrada de texto -->
+
+    <!--Inicio botones direccion raton -->
+    <button type="button" class="btn btn-default btn-lg" id="upMouse"><p class="text-center">Up</p></button>
+
+    <button type="button" class="btn btn-default btn-lg" id="leftMouse"><p class="text-center">Left</p></button>
+
+    <button type="button" class="btn btn-default btn-lg" id="rightMouse"><p class="text-center">Right</p></button>
+
+    <button type="button" class="btn btn-default btn-lg" id="downMouse"><p class="text-center">Down</p></button>
+    <!--Fin botones direccion raton -->
+
+</paginaJuego>
+<!--Fin  Cuerpo de la pagina principal del juego -->
+
+
+
+    <!--Inicio Javascript incrustado -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="views/jquery/jquery-1.11.1.js"></script>
+    <script src="views/jquery/login.js"></script>
+
+    <script>
+    $(document).ready(main);
+  </script>
+  <!--Fin Javascript incrustado -->
+
+  </body>
+<!-- Fin cuerpo-->
+
+</html>
