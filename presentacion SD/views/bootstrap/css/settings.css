@@ -22,6 +22,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
     max-width: 17.8em;
     min-height: 8em;
     max-height: 8em;
+    overflow: auto;
 }
 
 #panelSalas{

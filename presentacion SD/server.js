@@ -6,8 +6,8 @@ var bodyParser = require('body-parser')
   , server = http.createServer(app)
   , io = require('socket.io')(server)//
   , nickNamesUsados = []
+  , nickBuzon={}
   , salas = []
-  , cruceNickSala= {};
 
 salas.push('salaPorDefecto');
 
@@ -20,8 +20,10 @@ app.get('/', function(req, res){
 });
 
   io.sockets.on('connection', function(socket){ //Cada vez que un usuario se conecte              
+    usuariosConectados();
     inicioSesion(socket);
     chatGeneral(socket);
+    chatPrivado(socket);
   }); 
 
   //Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
@@ -37,9 +39,12 @@ app.get('/', function(req, res){
         callback(true);
         // Guardamos el nick del usuario, para luego poder mostrarlo
         socket.nickname = data;
+        //se crea un buzon para el nickName creado
+        nickBuzon[data]='null';
         // Agregamos al usuario al arreglo de conectados
         nickNamesUsados.push(socket.nickname);       
-        //enviamos el areglo actualizado de usuarios conectados
+        usuariosConectados();
+        //enviamos el arreglo actualizado de usuarios conectados
         //updateConectados();
       }
     });
@@ -49,9 +54,23 @@ function chatGeneral(socket){
   socket.on('sendingGeneralMessage', function(msg){
     msg='['+socket.nickname+']:'+msg;
   io.emit('receivingGeneralMessage', msg);
-  console.log(msg);
+  console.log(msg+' (MensajeNormal)');
   });
 }
+
+function chatPrivado(socket){
+  socket.on('sendingPrivateMessage', function(msg){
+    console.log(msg.join('|')+' (MensajePrivado)');
+
+    //Aqui hay que escribir el codigo para tratar con el mensaje privado enviado desde el usuario
+
+  //io.emit('receivingGeneralMessage', msg);
+  });
+}
+
+function usuariosConectados(){
+    io.sockets.emit('usuariosConectados', nickNamesUsados);
+  }
 
 server.listen(3000, function(){
   console.log('listening on *:3000');
