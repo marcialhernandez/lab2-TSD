@@ -3,10 +3,13 @@
   var ingresado=false;*/
 
 function main(){
-        $('#juegoListo').hide();//se oculta el registro
+
+        $('#juegoListo').hide();//se oculta el juego hasta que se haya logeado
+        //$('#chat').scrollTop = $('#chat').scrollHeight;
 
         var socket=io();
 
+        /*------------Boton Ingreso Usuario ----------------*/
          $('#ingresandoNickName').submit(function(e){     
 
         //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
@@ -27,7 +30,6 @@ function main(){
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
             else{
-              //$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
               window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
             }
           });
@@ -35,7 +37,27 @@ function main(){
           $nick.val('');
         }
       });
-  /*
+      /*------------Boton Ingreso Usuario ----------------*/
+
+
+      /*------------Boton MensajeChat ----------------*/
+
+        $('#enviarMensajeChat').submit(function(){
+          socket.emit('sendingGeneralMessage', $('#mensajeChat').val());
+          $('#mensajeChat').val('');
+          return false;
+        });
+        socket.on('receivingGeneralMessage', function(msg){
+        $('#mensajesPosteados').append($('<p class="text-left"> <\br>').text(msg));
+      });
+
+      /*------------Boton MensajeChat ----------------*/
+
+/*Fin main()*/
+}
+
+
+  /* ----------------------------Codigo basura-------------------------------------------------------
   $('#juegoListo').addClass('hidden');
 
   $('#ingresandoNickName').submit(function(){
@@ -66,4 +88,3 @@ function main(){
       //alert('usuario Ya existe');
     }
 })*/
-  }

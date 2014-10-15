@@ -20,11 +20,12 @@ app.get('/', function(req, res){
 });
 
   io.sockets.on('connection', function(socket){ //Cada vez que un usuario se conecte              
-    inicio_sesion(socket);
+    inicioSesion(socket);
+    chatGeneral(socket);
   }); 
 
   //Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
-  function inicio_sesion(socket){
+  function inicioSesion(socket){
     socket.on('requestForLogin', function(data, callback){  
       if (nickNamesUsados.indexOf(data) != -1 ){ // Si el nick ya existe se envia false al cliente
         callback(false);
@@ -44,26 +45,13 @@ app.get('/', function(req, res){
     });
   }
 
-/*io.on('connection', function(socket){
-  socket.on('requestForLogin', function(usuarioNuevo){
-    if (nickNamesUsados.indexOf(usuarioNuevo)==-1){ //retorna -1 si no esta, caso contrario retorna la posicion
-      nickNamesUsados.push(usuarioNuevo);
-      socket.emit('respondForLogin', 0); //0 significa que se ha logrado
-      console.log('[System]: Ha ingresado '+ usuarioNuevo);
-    }
-    else{
-      socket.emit('respondForLogin', 1); //1 significa que ya existe
-    }
-  })
-})
-*/
-
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-  io.emit('chat message', msg);
+function chatGeneral(socket){
+  socket.on('sendingGeneralMessage', function(msg){
+    msg='['+socket.nickname+']:'+msg;
+  io.emit('receivingGeneralMessage', msg);
   console.log(msg);
   });
-})
+}
 
 server.listen(3000, function(){
   console.log('listening on *:3000');
