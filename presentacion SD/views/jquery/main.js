@@ -106,6 +106,10 @@ function main(){
         $('#mensajesPosteados').append($('<p class="text-left">').text(msg));
       });
 
+        socket.on('returnMensajePrivado', function(msg){
+        $('#mensajesPosteados').append($('<p class="text-left">').text(msg));
+      });
+
       /*------------Boton MensajeChat ----------------*/
 
       socket.on('usuariosConectados', function(data){

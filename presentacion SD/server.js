@@ -6,8 +6,9 @@ var bodyParser = require('body-parser')
   , server = http.createServer(app)
   , io = require('socket.io')(server)//
   , nickNamesUsados = []
-  , nickBuzon={}
+  , nickSocket={} //diccionario que tiene los nombre:socket
   , salas = []
+  ,mensajeAEnviar;
 
 salas.push('salaPorDefecto');
 
@@ -40,7 +41,7 @@ app.get('/', function(req, res){
         // Guardamos el nick del usuario, para luego poder mostrarlo
         socket.nickname = data;
         //se crea un buzon para el nickName creado
-        nickBuzon[data]='null';
+        nickSocket[socket.nickname]=socket;
         // Agregamos al usuario al arreglo de conectados
         nickNamesUsados.push(socket.nickname);       
         usuariosConectados();
@@ -61,10 +62,14 @@ function chatGeneral(socket){
 function chatPrivado(socket){
   socket.on('sendingPrivateMessage', function(msg){
     console.log(msg.join('|')+' (MensajePrivado)');
-
-    //Aqui hay que escribir el codigo para tratar con el mensaje privado enviado desde el usuario
-
-  //io.emit('receivingGeneralMessage', msg);
+    if (nickNamesUsados.indexOf(msg[0]) != -1 ){ // Si el nick existe, se puede enviar el mensaje
+        mensajeAEnviar='[From '+socket.nickname+']: '+msg;
+        nickSocket[msg[0]].emit('returnMensajePrivado', mensajeAEnviar);
+      }
+    else{ //caso contrario, se envia un mensaje privado al emisor, avisando que no existe usuario
+        mensajeAEnviar='[System]: No existe el usuario';
+        nickSocket[socket.nickname].emit('returnMensajePrivado', mensajeAEnviar);
+    }
   });
 }
 
