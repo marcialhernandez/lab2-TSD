@@ -16,8 +16,10 @@ function main(){
         var comando;
         var palabras;
         var mensajeTotal=[];
+        var salasOnline;
+        var usuariosOnline;
 
-
+        
         /*------------Boton Ingreso Usuario ----------------*/
          $('#ingresandoNickName').submit(function(e){     
 
@@ -55,44 +57,73 @@ function main(){
 
           mensajeChat=$('#mensajeChat').val();
           palabras = mensajeChat.split(' ');
-              //saco el comando sin el @, y lo llevo a minusculas
+          //saco el comando sin el @, y lo llevo a minusculas
           comando=palabras[0].substring(1, palabras[0].length).toLowerCase(); 
           //Se identifica que es un comando
-          if (mensajeChat.charAt(0) == '@' && palabras[1].indexOf('::')!=-1) {
 
-              switch(comando) {
+          if (mensajeChat.charAt(0) == '@' && palabras.length>=2){ //debe existir otra palabra aparte del comando
 
-                case 'to':
+                if (palabras[1].indexOf('::')!=-1) {
+
+                  switch(comando) {
+
+                    case 'to':
                   //elimina el primer elemento del array
-                  palabras.shift();
+                    palabras.shift();
                   //debido a formato @to destino::mensaje......
-                  usuarioDestino=palabras[0].split('::');
+                    usuarioDestino=palabras[0].split('::');
                   //con el segundo shift se tiene solo el mensaje
-                  palabras.shift();
-                  mensajeTotal.push(usuarioDestino[0]); //agrego el usuario
-                  mensajeTotal.push(usuarioDestino[1]+' '+palabras.join(' ')) //agrego el mensaje
+                    palabras.shift();
+                    mensajeTotal.push(usuarioDestino[0]); //agrego el usuario
+                    mensajeTotal.push(usuarioDestino[1]+' '+palabras.join(' ')) //agrego el mensaje
 
                   //envio a servidor un array {usuario,mensaje} para que no tenga que trabajar las variables
                   //el cliente se las pasa ya formateadas
-                  socket.emit('sendingPrivateMessage', mensajeTotal); 
-                  $('#mensajeChat').val(' ');
-                  while(mensajeTotal.length > 0) {
+                    socket.emit('sendingPrivateMessage', mensajeTotal); 
+                    $('#mensajeChat').val(' ');
+                    while(mensajeTotal.length > 0) {
                     mensajeTotal.pop();
-                  }
+                    }
+                    return false;
+                    break;
+
+                  default:
+                  socket.emit('sendingGeneralMessage', mensajeChat);
+                  $('#mensajeChat').val(' ');
                   return false;
                   break;
 
-                default:
-                socket.emit('sendingGeneralMessage', mensajeChat);
-                $('#mensajeChat').val(' ');
-                return false;
-                break;
-
-              //fin swich
+                //fin swich
+                }
               }
 
-          //fin if que comprueba el @
+                else {
+
+                switch(comando) {
+                    
+                    case 'sala':
+                    palabras.shift();
+                    palabras.join(' '); //vuelvo a juntar las palabras por espacio
+                    socket.emit('requestForSala', palabras);
+                    $('#mensajeChat').val(' ');
+                    while(mensajeTotal.length > 0) {
+                      mensajeTotal.pop();
+                    }
+                    return false;
+                    break;
+
+                  default:
+                  socket.emit('sendingGeneralMessage', mensajeChat);
+                  $('#mensajeChat').val(' ');
+                  return false;
+                  break;
+
+            //fin switch
+            }
+            //fin else
           }
+          //fin if que comprueba el @
+        }
 
           else{
 
@@ -113,45 +144,20 @@ function main(){
       /*------------Boton MensajeChat ----------------*/
 
       socket.on('usuariosConectados', function(data){
-        var html = '';
+        usuariosOnline = '';
         for(i=0; i<data.length; i++){
-          html += data[i]+'<br/>'
+          usuariosOnline += data[i]+'<br/>'
         }
-        $('#panelConectados').html(html); //se guardan en el apartado dejado para los usuarios en el html
+        $('#panelConectados').html(usuariosOnline); //se guardan en el apartado dejado para los usuarios en el html
+      });
+
+      socket.on('salasActivas', function(data){
+        salasOnline = '';
+        for(i=0; i<data.length; i++){
+          salasOnline += data[i]+'<br/>'
+        }
+        $('#panelSalas').html(salasOnline); //se guardan en el apartado dejado para los usuarios en el html
       });
 
 /*Fin main()*/
 }
-
-
-  /* ----------------------------Codigo basura-------------------------------------------------------
-  $('#juegoListo').addClass('hidden');
-
-  $('#ingresandoNickName').submit(function(){
-    usuarioLocal=$('#nickname').val();
-    //$('#loginListo').hide();
-    //$('#juegoListo').show();
-    socket.emit('requestForLogin', usuarioLocal);
-    $('#ingresandoNickName').append($('<h4>').text('enviando...'));
-        //$('#loginListo').hide();
-    //$('#juegoListo').show();
-    $('#nickname').val('');
-    });
-
-  //elemento.hide();
-  //elemento.show();
-
-    socket.on('respondForLogin', function(respuestaLogin){
-    if (respuestaLogin==0){
-      $('#ingresandoNickName').append($('<h4>').text('Ingresando al juego...'));
-      ingresado=true;
-      //var url = "views/index.html";    
-      //$(location).attr('href',"views/index.html");
-      //mainJuego();
-    }
-
-    else{
-      $('#ingresandoNickName').append($('<h4>').text('El usuario ya existe...'));
-      //alert('usuario Ya existe');
-    }
-})*/
