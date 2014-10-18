@@ -159,5 +159,9 @@ function main(){
         $('#panelSalas').html(salasOnline); //se guardan en el apartado dejado para los usuarios en el html
       });
 
+      socket.on('infoUsuario', function(data){
+        $('#bloqueUsuario').html('Jugador: '+data[0]+'<br/>'+'Sala Actual: '+data[1]);
+      });
+
 /*Fin main()*/
 }
