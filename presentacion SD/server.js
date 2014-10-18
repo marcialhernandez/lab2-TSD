@@ -30,6 +30,7 @@ app.get('/', function(req, res){
     chatPrivado(socket);
     cambioDeSala(socket);
     //infoUsuario(socket); al inicio no hay nadie
+    requestForInfoUsuarios(socket);
   }); 
 
   //Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
@@ -74,14 +75,25 @@ function chatPrivado(socket){
         //console.log('sala del usuario destino:'+nickSocket[msg[0]].salaActual); con esto se obtiene la sala del usuario destino
         mensajeDeVuelta='[To '+msg[0]+']: '+msg[1];
         nickSocket[msg[0]].emit('returnMensajePrivado', mensajeAEnviar);
-        nickSocket[socket.nickname].emit('returnMensajePrivado', mensajeDeVuelta);
+        socket.emit('returnMensajePrivado', mensajeDeVuelta);
       }
     else{ //caso contrario, se envia un mensaje privado al emisor, avisando que no existe usuario
         mensajeAEnviar='[System]: No existe el usuario';
-        nickSocket[socket.nickname].emit('returnMensajePrivado', mensajeAEnviar);
+        socket.emit('returnMensajePrivado', mensajeAEnviar);
     }
   });
 }
+
+function requestForInfoUsuarios(socket){
+    socket.on('requestForInfoUsuarios', function(msg){
+    var infoUsuarios = [];
+    for (clave in nickSocket) {
+      infoUsuarios.push(nickSocket[clave].nickname+' en '+nickSocket[clave].salaActual);
+    }
+    socket.emit('usuariosConectados', infoUsuarios);
+  })
+}
+
 
 function usuariosConectados(){
     io.sockets.emit('usuariosConectados', nickNamesUsados);
@@ -96,9 +108,17 @@ function infoUsuario(socket){
 
 function cambioDeSala(socket){
     socket.on('requestForSala', function(data){ 
-    if (salas.indexOf(data) == -1 ){ //Si la sala no existe
+      var siEsta=false;
+      for (i=0;i<salas.length;i++){
+        if(String(salas[i]).localeCompare(String(data))==0){
+          siEsta=true;
+          break;
+        }
+      }
+
+    if (siEsta==false ){ //Si la sala no existe
       //Se crea una nueva, se asigna al socket actual y se anuncia
-      salas.push(String(data));
+      salas.push(data);
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala '+socket.salaActual;
@@ -118,7 +138,6 @@ function cambioDeSala(socket){
       //se actualizan las salas activas
       salasActivas();
     }
-
     else{
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala';
@@ -136,6 +155,7 @@ function cambioDeSala(socket){
       mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
     } 
+    usuariosConectados(); //se actualiza la lista de conectados, para resetear en caso de que @ver este activo
     infoUsuario(socket); //se actualiza la informacion del usuario
 
     });

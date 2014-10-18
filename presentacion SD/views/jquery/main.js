@@ -61,9 +61,11 @@ function main(){
           comando=palabras[0].substring(1, palabras[0].length).toLowerCase(); 
           //Se identifica que es un comando
 
-          if (mensajeChat.charAt(0) == '@' && palabras.length>=2){ //debe existir otra palabra aparte del comando
+          if (mensajeChat.charAt(0) == '@'){ //debe existir otra palabra aparte del comando
 
-                if (palabras[1].indexOf('::')!=-1) {
+            if (palabras.length>=2){ //son comandos que necesitan un argumento
+
+                if (palabras[1].indexOf('::')!=-1) { //comando que necesita un :: en la segunda palabra argumento
 
                   switch(comando) {
 
@@ -80,7 +82,7 @@ function main(){
                   //envio a servidor un array {usuario,mensaje} para que no tenga que trabajar las variables
                   //el cliente se las pasa ya formateadas
                     socket.emit('sendingPrivateMessage', mensajeTotal); 
-                    $('#mensajeChat').val(' ');
+                    $('#mensajeChat').val('');
                     while(mensajeTotal.length > 0) {
                     mensajeTotal.pop();
                     }
@@ -89,15 +91,16 @@ function main(){
 
                   default:
                   socket.emit('sendingGeneralMessage', mensajeChat);
-                  $('#mensajeChat').val(' ');
+                  $('#mensajeChat').val('');
                   return false;
                   break;
 
                 //fin swich
                 }
-              }
 
-                else {
+              }//fin que comprueba :: en la segunda palabra
+
+                else { //son comandos que necesitan un argumento pero no necesariamente deben tener ::
 
                 switch(comando) {
                     
@@ -105,7 +108,7 @@ function main(){
                     palabras.shift();
                     palabras.join(' '); //vuelvo a juntar las palabras por espacio
                     socket.emit('requestForSala', palabras);
-                    $('#mensajeChat').val(' ');
+                    $('#mensajeChat').val('');
                     while(mensajeTotal.length > 0) {
                       mensajeTotal.pop();
                     }
@@ -114,16 +117,49 @@ function main(){
 
                   default:
                   socket.emit('sendingGeneralMessage', mensajeChat);
-                  $('#mensajeChat').val(' ');
+                  $('#mensajeChat').val('');
                   return false;
                   break;
+            }//fin switch
+            
+          }//fin else
 
-            //fin switch
-            }
-            //fin else
-          }
-          //fin if que comprueba el @
-        }
+        }//fin que comprueba la cantidad de palabras ingresadas
+
+        else{ //el proposito de esto es hacer comandos que no tengan argumentos por ejemplo @ayuda y @ver
+
+                  switch(comando) {
+                    
+                    case 'ayuda':
+                    $('#mensajesPosteados').append($('<p class="text-left">').text('Comandos: @ayuda-> Muestra los comandos disponibles'));
+                    $('#mensajesPosteados').append($('<p class="text-left">').text('@to <nombreDestino>::<Mensaje> ->Envia un mensaje privado a destino'));
+                    $('#mensajesPosteados').append($('<p class="text-left">').text('@sala-> Cambia de sala, en caso que no exista se crea una'));
+                    $('#mensajesPosteados').append($('<p class="text-left">').text('@ver-> Muestra las salas de cada usuario'));
+                    while(mensajeTotal.length > 0) {
+                      mensajeTotal.pop();
+                    }
+                    return false;
+                    break;
+
+                    case 'ver':
+                    socket.emit('requestForInfoUsuarios', palabras);
+                    $('#mensajeChat').val('');
+                    while(mensajeTotal.length > 0) {
+                      mensajeTotal.pop();
+                    }
+                    return false;
+                    break;
+
+                    default:
+                    socket.emit('sendingGeneralMessage', mensajeChat);
+                    $('#mensajeChat').val('');
+                    return false;
+                    break;
+            }//fin switch
+
+      }//fin del caso de los comandos sin argumento
+          
+        }//fin if que comprueba el @
 
           else{
 
