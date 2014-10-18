@@ -6,13 +6,15 @@ var bodyParser = require('body-parser')
   , server = http.createServer(app)
   , io = require('socket.io')(server)//
   , nickNamesUsados = []
-  , nickSocket={} //diccionario que tiene los nombre:socket
   , salas = [] //salas
+  , salasTablero={} //diccionario que tiene nombreSala:Tablero
+  , nickSocket={} //diccionario que tiene los nombre:socket
   //cada sala tiene un nombre asociado a una lista de usuarios activos
-  ,mensajeAEnviar
+  , mensajeAEnviar
   , mensajeDeVuelta;
 
 salas.push('porDefecto'); //sala por defecto
+asignarTablero(salasTablero, salas[0]);//Asigno tablero en la sala por defecto
 
 app.use("/views", express.static(__dirname + '/views'));
 
@@ -31,6 +33,7 @@ app.get('/', function(req, res){
     cambioDeSala(socket);
     //infoUsuario(socket); al inicio no hay nadie
     requestForInfoUsuarios(socket);
+    //tableroSalaActual(socket); No es necesario cargar el tablero al inicio
   }); 
 
   //Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
@@ -52,9 +55,12 @@ app.get('/', function(req, res){
         nickNamesUsados.push(socket.nickname);
         socket.join(salas[0]); //se ingresa a la sala por defecto
         socket.salaActual=salas[0]; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+        console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
+        console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
         usuariosConectados(); //se actualizan los usuarios conectados
         salasActivas(); //se actualizan las salas activas
         infoUsuario(socket); //se actualiza la informacion del usuario
+        tableroSalaActual(socket); //se actualiza el tablero una vez ya esta logeado
       }
     });
   }
@@ -109,7 +115,7 @@ function infoUsuario(socket){
 function cambioDeSala(socket){
     socket.on('requestForSala', function(data){ 
       var siEsta=false;
-      for (i=0;i<salas.length;i++){
+      for (var i=0;i<salas.length;i++){
         if(String(salas[i]).localeCompare(String(data))==0){
           siEsta=true;
           break;
@@ -127,6 +133,7 @@ function cambioDeSala(socket){
       socket.leave(socket.salaActual);
       //asocio la nueva sala
       socket.salaActual=data;
+      asignarTablero(salasTablero, socket.salaActual); //asigno un tablero nuevo a la sala recien creada
       console.log(socket.nickname+' ha ingresado a la sala '+socket.salaActual);
       //ingreso a la nueva sala
       socket.join(data);
@@ -155,8 +162,11 @@ function cambioDeSala(socket){
       mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
     } 
+    console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
+    console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
     usuariosConectados(); //se actualiza la lista de conectados, para resetear en caso de que @ver este activo
     infoUsuario(socket); //se actualiza la informacion del usuario
+    tableroSalaActual(socket); //se actualiza el tablero actual
 
     });
   }
@@ -164,6 +174,51 @@ function cambioDeSala(socket){
 function salasActivas(){
     io.sockets.emit('salasActivas', salas);
   }
+
+//Emito la matriz que esta asociada a la sala que esta asociada al socket actual
+function tableroSalaActual(socket){
+    io.sockets.emit('tableroSalaActual', salasTablero[socket.salaActual]);
+  }
+
+/*-------------------------------------------------------------------------
+/*------------------Funciones respecto al juego--------------------------*/
+
+function asignarTablero(diccionarioSalas, nombreSala){
+  diccionarioSalas[nombreSala]=inicializaTablero(); //inicializo un tablero en la sala de entrada
+}
+
+function inicializaTablero(){
+  var tablero = [];
+  for(var i=0; i<10; i++) {
+    tablero[i] = [];
+    for(var j=0; j<10; j++) {
+        tablero[i][j] = 'O'; //no hay nada (o mayuscula)
+    }
+  }
+
+  //Se agregan 7 trampas al inicio
+  for (var i=0;i<7;i++){
+    //Math.floor(Math.random() * 9) = numero aleatorio entre 0 y 9
+    tablero[getRandomInt(0, 9)][getRandomInt(0, 9)]='T'// T de trampa
+  }
+
+  //Se agrega la salida, alejada del inicio , con 6 celdas de lejania tanto de forma horizontal como vertical
+  //Si es necesario sobreEscribe una trampa
+  tablero [getRandomInt(6, 9)][getRandomInt(6, 9)]='S';
+
+  //Al final se agrega al raton al inicio
+  tablero[0][0]='@' //raton
+
+  return tablero;
+
+}//Fin funcion inicializarTablero
+
+//http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/*-------------------------------------------------------------------------*/
 
 server.listen(3000, function(){
   console.log('listening on *:3000');
