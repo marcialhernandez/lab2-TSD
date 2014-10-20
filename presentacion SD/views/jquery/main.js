@@ -199,8 +199,59 @@ function main(){
               window.alert("cambio de turno");
             }
           });
-          //Vaciamos el input donde se ingreso el nick
+
         });
+
+        $('#downMouse').submit(function(e){ //botones de movimiento upMouse, leftMouse, rightMouse, downMouse     
+        
+          e.preventDefault(); //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+
+          socket.emit('requestForDown', function(data){
+            //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+            if(!data){
+                window.alert("movimiento invalido");
+            }
+            //si no, se muestra el error y se solicita un nuevo ingreso de usuario
+            else{
+              window.alert("cambio de turno");
+            }
+          });
+          
+        });
+          $('#rightMouse').submit(function(e){ //botones de movimiento upMouse, leftMouse, rightMouse, downMouse     
+        
+          e.preventDefault(); //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+
+          socket.emit('requestForRight', function(data){
+            //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+            if(!data){
+                window.alert("movimiento invalido");
+            }
+            //si no, se muestra el error y se solicita un nuevo ingreso de usuario
+            else{
+              window.alert("cambio de turno");
+            }
+          });
+          
+        });
+
+          $('#leftMouse').submit(function(e){ //botones de movimiento upMouse, leftMouse, rightMouse, downMouse     
+        
+          e.preventDefault(); //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+
+          socket.emit('requestForLeft', function(data){
+            //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+            if(!data){
+                window.alert("movimiento invalido");
+            }
+            //si no, se muestra el error y se solicita un nuevo ingreso de usuario
+            else{
+              window.alert("cambio de turno");
+            }
+          });
+          
+        });
+
       /*------------Fin Botones de movimiento ----------------*/
 
       socket.on('usuariosConectados', function(data){
