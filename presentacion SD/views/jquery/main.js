@@ -181,7 +181,7 @@ function main(){
 
       socket.on('usuariosConectados', function(data){
         usuariosOnline = '';
-        for(i=0; i<data.length; i++){
+        for(var i=0; i<data.length; i++){
           usuariosOnline += data[i]+'<br/>'
         }
         $('#panelConectados').html(usuariosOnline); //se guardan en el apartado dejado para los usuarios en el html
@@ -197,6 +197,18 @@ function main(){
 
       socket.on('infoUsuario', function(data){
         $('#bloqueUsuario').html('Jugador: '+data[0]+'<br/>'+'Sala Actual: '+data[1]);
+      });
+
+      socket.on('tableroSalaActual', function(data){
+        //recepcionar matriz y mostrar por vista
+        var datosFila;
+        for (var fila=0;fila<10;fila++){
+        datosFila = ''; //para cada fila, se resetea la variable
+          for(var columna=0; columna<10; columna++){
+            datosFila += '<td>'+data[fila][columna]+'</td>' //<td>1</td>
+          }//termino for por columna
+          $('#fila'+fila).html(datosFila); //se reemplaza la informacion de las columnas a la fila actual
+        }//termino for por fila
       });
 
 /*Fin main()*/
