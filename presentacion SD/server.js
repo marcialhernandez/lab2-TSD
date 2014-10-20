@@ -6,15 +6,15 @@ var bodyParser = require('body-parser')
   , server = http.createServer(app)
   , io = require('socket.io')(server)//
   , nickNamesUsados = []
-  , salas = [] //salas
+  , salas = [] //lista de salas, cada sala es de tipo sala, que contiene su nombre, posicionRaton,jugadores y el turno actual
   , salasTablero={} //diccionario que tiene nombreSala:Tablero
   , nickSocket={} //diccionario que tiene los nombre:socket
   //cada sala tiene un nombre asociado a una lista de usuarios activos
   , mensajeAEnviar
   , mensajeDeVuelta;
 
-salas.push('porDefecto'); //sala por defecto
-asignarTablero(salasTablero, salas[0]);//Asigno tablero en la sala por defecto
+agregarSala('porDefecto',salas);
+asignarTablero(salasTablero, salas[0].nombre);//Asigno tablero en la sala por defecto
 
 app.use("/views", express.static(__dirname + '/views'));
 
@@ -36,6 +36,35 @@ app.get('/', function(req, res){
     //tableroSalaActual(socket); No es necesario cargar el tablero al inicio
   }); 
 
+  //-------------------------------------------------------------------------
+
+  function sala(nombre) {
+    this.nombre = nombre; //string, nombre de la sala
+    this.posicionRaton=[0,0]; //[x,y] con x e y numeros enteros, al principio siempre esta en esta posicion
+    this.jugadores=[]; //lista con los jugadores
+    this.turnoActual=''; //nick del jugador que le toca jugar
+  }
+
+  sala.prototype = { //funcion propia del tipo sala
+    agregarJugador: function(nombreJugador) {
+        this.jugadores.push(nombreJugador);
+    }
+  };
+
+  //agrega una sala con un nombre dado a la lista de salas
+  function agregarSala(nombreSalaNueva,listaDeSalas){
+    var nuevaSala = new sala(nombreSalaNueva);
+    listaDeSalas.push(nuevaSala);
+  }
+
+  /*sala.prototype = { por implementar
+    quitarJugador: function(nombreJugador) {
+        this.jugadores.push(nombreJugador);
+    }
+  };*/
+
+  //-------------------------------------------------------------------------
+
   //Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
   function inicioSesion(socket){
     socket.on('requestForLogin', function(data, callback){  
@@ -53,8 +82,8 @@ app.get('/', function(req, res){
         nickSocket[socket.nickname]=socket;
         // Agregamos al usuario al arreglo de conectados
         nickNamesUsados.push(socket.nickname);
-        socket.join(salas[0]); //se ingresa a la sala por defecto
-        socket.salaActual=salas[0]; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+        socket.join(salas[0].nombre); //se ingresa a la sala por defecto
+        socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
         console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
         console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
         usuariosConectados(); //se actualizan los usuarios conectados
@@ -116,7 +145,7 @@ function cambioDeSala(socket){
     socket.on('requestForSala', function(data){ 
       var siEsta=false;
       for (var i=0;i<salas.length;i++){
-        if(String(salas[i]).localeCompare(String(data))==0){
+        if(String(salas[i].nombre).localeCompare(String(data))==0){
           siEsta=true;
           break;
         }
@@ -124,7 +153,8 @@ function cambioDeSala(socket){
 
     if (siEsta==false ){ //Si la sala no existe
       //Se crea una nueva, se asigna al socket actual y se anuncia
-      salas.push(data);
+      agregarSala(data,salas);
+      //salas.push(data);
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala '+socket.salaActual;
@@ -172,12 +202,16 @@ function cambioDeSala(socket){
   }
 
 function salasActivas(){
-    io.sockets.emit('salasActivas', salas);
+    var nombreSalas=[];
+    for (var i=0;i<salas.length;i++){
+      nombreSalas.push(salas[i].nombre);
+    }
+    io.sockets.emit('salasActivas', nombreSalas);
   }
 
 //Emito la matriz que esta asociada a la sala que esta asociada al socket actual
 function tableroSalaActual(socket){
-    io.sockets.emit('tableroSalaActual', salasTablero[socket.salaActual]);
+    socket.emit('tableroSalaActual', salasTablero[socket.salaActual]);
   }
 
 /*-------------------------------------------------------------------------
