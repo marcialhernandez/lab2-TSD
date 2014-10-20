@@ -8,12 +8,13 @@ var bodyParser = require('body-parser')
   , nickNamesUsados = []
   , salas = [] //lista de salas, cada sala es de tipo sala, que contiene su nombre, posicionRaton,jugadores y el turno actual
   , salasTablero={} //diccionario que tiene nombreSala:Tablero
+  , salasPosicion={} //diccionario que tiene nombreSala:posicionListaDeSalas
   , nickSocket={} //diccionario que tiene los nombre:socket
   //cada sala tiene un nombre asociado a una lista de usuarios activos
   , mensajeAEnviar
   , mensajeDeVuelta;
 
-agregarSala('porDefecto',salas);
+agregarSala('porDefecto',salas, salasPosicion);
 asignarTablero(salasTablero, salas[0].nombre);//Asigno tablero en la sala por defecto
 
 app.use("/views", express.static(__dirname + '/views'));
@@ -34,13 +35,15 @@ app.get('/', function(req, res){
     //infoUsuario(socket); al inicio no hay nadie
     requestForInfoUsuarios(socket);
     //tableroSalaActual(socket); No es necesario cargar el tablero al inicio
+    requestForUp(socket);
+
   }); 
 
   //-------------------------------------------------------------------------
 
   function sala(nombre) {
     this.nombre = nombre; //string, nombre de la sala
-    this.posicionRaton=[0,0]; //[x,y] con x e y numeros enteros, al principio siempre esta en esta posicion
+    this.posicionRaton=[0,0]; //[x,y] con x = Fila e y =Columna numeros enteros, al principio siempre esta en esta posicion
     this.jugadores=[]; //lista con los jugadores
     this.turnoActual=''; //nick del jugador que le toca jugar
   }
@@ -51,9 +54,22 @@ app.get('/', function(req, res){
     }
   };
 
+  /* no funciona investigar
+    sala.prototype = { //funcion propia del tipo sala
+    ratonY: function() {
+        return this.posicionRaton[0];
+    }
+  };*/
+
   //agrega una sala con un nombre dado a la lista de salas
-  function agregarSala(nombreSalaNueva,listaDeSalas){
+  function agregarSala(nombreSalaNueva,listaDeSalas,diccionarioPosSalas){
     var nuevaSala = new sala(nombreSalaNueva);
+    diccionarioPosSalas[nombreSalaNueva+'']=listaDeSalas.length;
+    /*diccionarioPosSalas.push({
+    nombreSalaNueva: listaDeSalas.length
+    });*/
+    //La logica es simple, antes de agregar a la cola de salas la nueva sala, guardo el tamanio total de la lista
+    //como atributo, pues se cumple que tamanio total lista-1 = ultimo elemento lista 
     listaDeSalas.push(nuevaSala);
   }
 
@@ -84,6 +100,7 @@ app.get('/', function(req, res){
         nickNamesUsados.push(socket.nickname);
         socket.join(salas[0].nombre); //se ingresa a la sala por defecto
         socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+
         console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
         console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
         usuariosConectados(); //se actualizan los usuarios conectados
@@ -153,7 +170,7 @@ function cambioDeSala(socket){
 
     if (siEsta==false ){ //Si la sala no existe
       //Se crea una nueva, se asigna al socket actual y se anuncia
-      agregarSala(data,salas);
+      agregarSala(data,salas,salasPosicion);
       //salas.push(data);
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
       //Se anuncia en la sala actual que ha salido de la sala
@@ -251,6 +268,43 @@ function inicializaTablero(){
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+//salas = []
+//salasPosicion={}
+
+function requestForUp(socket){
+    socket.on('requestForUp', function(callback){  
+      //Si la fila del raton de la sala actual que se contiene en la lista de salas es 0
+      //console.log('la posicion de la sala:'+socket.salaActual+' es '+salasPosicion[socket.salaActual]); Test
+      //console.log(salas[salasPosicion[socket.salaActual]].posicionRaton[0]); Test
+      if (salas[salasPosicion[socket.salaActual]].posicionRaton[0]==0){
+        //console.log('movimiento invalido!!');
+        callback(false);
+      }
+      // Si no
+      else{
+
+        callback(true);
+        }
+       /* //id_room = null;
+        //enviamos true al cliente
+        // Guardamos el nick del usuario, para luego poder mostrarlo
+        socket.nickname = data;
+        //se crea un buzon para el nickName creado
+        nickSocket[socket.nickname]=socket;
+        // Agregamos al usuario al arreglo de conectados
+        nickNamesUsados.push(socket.nickname);
+        socket.join(salas[0].nombre); //se ingresa a la sala por defecto
+        socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+        console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
+        console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
+        usuariosConectados(); //se actualizan los usuarios conectados
+        salasActivas(); //se actualizan las salas activas
+        infoUsuario(socket); //se actualiza la informacion del usuario
+        tableroSalaActual(socket); //se actualiza el tablero una vez ya esta logeado*/
+      
+    });
+  }
 
 /*-------------------------------------------------------------------------*/
 

@@ -50,7 +50,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
 
 }
 
-#logout
+#botonLogout
 {
     min-width: 5em;
     max-width: 5em;
@@ -76,7 +76,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
   transition: all 0.5s ease;
 }
 
-#upMouse
+#botonUp
 {
     min-height: 3em;
     max-height:3em;
@@ -86,7 +86,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
     margin-top: -390px;
 }
 
-#leftMouse
+#botonLeft
 {
     min-height: 3em;
     max-height:3em;
@@ -96,7 +96,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
     margin-top: -320px;
 }
 
-#rightMouse
+#botonRight
 {
     min-height: 3em;
     max-height:3em;
@@ -106,7 +106,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
     margin-top: -360px;
 }
 
-#downMouse
+#botonDown
 {
     min-height: 3em;
     max-height:3em;
