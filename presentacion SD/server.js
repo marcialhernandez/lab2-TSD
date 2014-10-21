@@ -409,25 +409,28 @@ function requestForUp(socket){
                     break;
                   }
 
+        /*para cada peticion de movimiento de raton
+        cada vez que haga un movimiento
+        buscar la posicion del turno actual en la lista de jugadores
+        si la posicion es distinta al largo de aquella lista-1  (ultima posicion)
+        --->turno actual= listaJugadores[posicionencontrada+1]
+
+        caso contrario:
+        --->turno actual = lista[Jugadores][0]*/
+
+        var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+        if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+        }
+        else{
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+        }
+
+        console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
+
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
         }
-       /* //id_room = null;
-        //enviamos true al cliente
-        // Guardamos el nick del usuario, para luego poder mostrarlo
-        socket.nickname = data;
-        //se crea un buzon para el nickName creado
-        nickSocket[socket.nickname]=socket;
-        // Agregamos al usuario al arreglo de conectados
-        nickNamesUsados.push(socket.nickname);
-        socket.join(salas[0].nombre); //se ingresa a la sala por defecto
-        socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
-        console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
-        console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
-        usuariosConectados(); //se actualizan los usuarios conectados
-        salasActivas(); //se actualizan las salas activas
-        infoUsuario(socket); //se actualiza la informacion del usuario
-        tableroSalaActual(socket); //se actualiza el tablero una vez ya esta logeado*/
       
     });
   }
@@ -493,6 +496,24 @@ function requestForDown(socket){
                     break;
                   }
 
+        /*para cada peticion de movimiento de raton
+        cada vez que haga un movimiento
+        buscar la posicion del turno actual en la lista de jugadores
+        si la posicion es distinta al largo de aquella lista-1  (ultima posicion)
+        --->turno actual= listaJugadores[posicionencontrada+1]
+
+        caso contrario:
+        --->turno actual = lista[Jugadores][0]*/
+
+        var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+        if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+        }
+        else{
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+        }
+
+        console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
@@ -557,6 +578,24 @@ function requestForRight(socket){
                     break;
                   }
 
+        /*para cada peticion de movimiento de raton
+        cada vez que haga un movimiento
+        buscar la posicion del turno actual en la lista de jugadores
+        si la posicion es distinta al largo de aquella lista-1  (ultima posicion)
+        --->turno actual= listaJugadores[posicionencontrada+1]
+
+        caso contrario:
+        --->turno actual = lista[Jugadores][0]*/
+
+        var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+        if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+        }
+        else{
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+        }
+
+        console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
@@ -619,6 +658,24 @@ function requestForLeft(socket){
                     console.log('paso algo raro con el movimiento de '+socket.nickname);
                     break;
                   }
+
+        /*para cada peticion de movimiento de raton
+        cada vez que haga un movimiento
+        buscar la posicion del turno actual en la lista de jugadores
+        si la posicion es distinta al largo de aquella lista-1  (ultima posicion)
+        --->turno actual= listaJugadores[posicionencontrada+1]
+
+        caso contrario:
+        --->turno actual = lista[Jugadores][0]*/
+
+        var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+        if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+        }
+        else{
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+        }
+        console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
