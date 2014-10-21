@@ -117,6 +117,11 @@ app.get('/', function(req, res){
         socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
         //este corresponde al tamanio de la lista de conectados antes de pertenecer a la lista
         //-----------------------------------------------------------
+        //si no hay nadie en la sala, el turno actual sera de la persona que acaba de ingresar
+        if (salas[salasPosicion[socket.salaActual]].jugadores.length==0) {
+          salas[salasPosicion[socket.salaActual]].turnoActual=socket.nickname;
+          console.log('turno sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
+        }
         //Se debe agregar el usuario a la informacion de la sala actual
         //A la lista de jugadores de la  sala actual, se le pushea el nombre del jugador actual
         salas[salasPosicion[socket.salaActual]].jugadores.push(socket.nickname);
@@ -213,7 +218,8 @@ function cambioDeSala(socket){
       salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
       console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
 
-      //Y hay que regestionar el nuevo turno
+      //Y hay que regestionar el turno de la sala antigua
+
 
       //-----------------------------------------------------------------------------------------
 
@@ -226,10 +232,20 @@ function cambioDeSala(socket){
       console.log(socket.nickname+' ha ingresado a la sala '+socket.salaActual);
       //ingreso a la nueva sala
       socket.join(data);
+
+      //si no hay nadie en la sala, el turno actual sera de la persona que acaba de ingresar
+
+      if (salas[salasPosicion[socket.salaActual]].jugadores.length==0) {
+          salas[salasPosicion[socket.salaActual]].turnoActual=socket.nickname;
+          console.log('turno sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
+        }
+
       //Se debe agregar el usuario a la informacion de la sala actual
       //A la lista de jugadores de la  sala actual, se le pushea el nombre del jugador actual
+
       salas[salasPosicion[socket.salaActual]].jugadores.push(socket.nickname);
       console.log('Jugadores sala nueva '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
+
 
       //mensaje a todos los conectados
       mensajeAEnviar=socket.nickname+' ha creado la sala '+data;
