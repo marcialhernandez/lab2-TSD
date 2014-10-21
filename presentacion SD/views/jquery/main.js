@@ -254,6 +254,19 @@ function main(){
 
       /*------------Fin Botones de movimiento ----------------*/
 
+      /*------------Boton de Logout ----------------*/
+
+        $('#logout').submit(function(){ //botones de movimiento upMouse, leftMouse, rightMouse, downMouse     
+        
+          //En este caso, se quiere refrescar la pagina, por ello no se previene
+          //e.preventDefault(); //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+
+          socket.emit('requestForLogout');
+
+        })
+
+      /*------------Fin de Boton de Logout ----------------*/
+
       socket.on('usuariosConectados', function(data){
         usuariosOnline = '';
         for(var i=0; i<data.length; i++){

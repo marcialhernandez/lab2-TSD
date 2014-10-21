@@ -39,6 +39,7 @@ app.get('/', function(req, res){
     requestForDown(socket);
     requestForRight(socket);
     requestForLeft(socket);
+    usuarioDesconectado(socket);
   }); 
 
   server.listen(3000, function(){
@@ -282,9 +283,6 @@ function inicializaTablero(){
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-//salas = []
-//salasPosicion={}
 
 function requestForUp(socket){
     socket.on('requestForUp', function(callback){  
@@ -566,4 +564,33 @@ function requestForLeft(socket){
     });
   }
 
+function requestForLogout(socket){
+    socket.on('requestForLogout', function(){  
+      usuarioDesconectado(socket);        
+    });
+  }
+
+function usuarioDesconectado(socket){
+  socket.on('disconnect', function () {
+    if(socket.nickname!=undefined){
+     //Sucesos que pasan cuando un usuario se desconecta
+     //ejemplo obtenido de ayudantia clase 3
+     //eliminar usuario de nickNamesUsados = [] y nickSocket={} 
+    console.log('EL usuario '+socket.nickname+ ' se ha desconectado...');
+    var posicionAEliminar=nickNamesUsados.indexOf(socket.nickname);
+    var ultimoMensaje='[System]: El usuario '+socket.nickname+' se ha desconectado.';
+    //se manda un mensaje global avisando que el usuario se ha desconectado
+    io.sockets.emit('receivingGeneralMessage', ultimoMensaje);
+    //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
+    //de elementos a eliminar a partir la posicion mencionada
+    nickNamesUsados.splice(posicionAEliminar,1);
+    delete nickSocket[socket.nickname];
+    usuariosConectados();
+    }
+    else{
+      console.log('Se ha salido de la pagina de login sin ingresar');
+    }
+
+  });
+}
 /*-------------------------------------------------------------------------*/
