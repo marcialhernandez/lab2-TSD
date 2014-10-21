@@ -101,6 +101,7 @@ app.get('/', function(req, res){
         callback(true);
         // Guardamos el nick del usuario, para luego poder mostrarlo
         socket.nickname = data;
+        socket.puntaje = 0;
         //se crea un buzon para el nickName creado
         nickSocket[socket.nickname]=socket;
         // Agregamos al usuario al arreglo de conectados
@@ -162,6 +163,7 @@ function infoUsuario(socket){
   var infoPersonal=[];
   infoPersonal.push(socket.nickname);
   infoPersonal.push(socket.salaActual);
+  infoPersonal.push(socket.puntaje);
     nickSocket[socket.nickname].emit('infoUsuario', infoPersonal);
   }
 
@@ -295,10 +297,33 @@ function requestForUp(socket){
       }
       // Si no
       else{
+        //socket.puntaje
         //salasTablero={} //diccionario que tiene nombreSala:Tablero
         callback(true);
         var posAntigua=[salas[salasPosicion[socket.salaActual]].posicionRaton[0],salas[salasPosicion[socket.salaActual]].posicionRaton[1]];
         var posNueva=[posAntigua[0]-1,posAntigua[1]]; //sube una fila
+
+        var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+
+        switch(celdaRaton) {
+                    
+                    case 'T':
+                    socket.puntaje=socket.puntaje-300;
+                    break;
+
+                    case 'O':
+                    socket.puntaje=socket.puntaje+100;
+                    break;
+
+                    case 'S':
+                    socket.puntaje=socket.puntaje+300;
+                    break;
+
+                    default:
+                    console.log('paso algo raro con el movimiento de '+socket.nickname);
+                    break;
+                  }
+
         //la posicion antes de mover el raton se reemplaza por su estado inicial
         salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
         //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
@@ -307,6 +332,8 @@ function requestForUp(socket){
         salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
         //se actualiza la posicion del raton
         salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+
+        infoUsuario(socket);
         tableroActualizaSalaActual(socket);
         }
        /* //id_room = null;
@@ -338,11 +365,35 @@ function requestForDown(socket){
       }
       // Si no
       else{
-
+        //socket.puntaje
         callback(true);
+        //celda que acaba de pisar el raton
+
         //console.log('posicion antigua raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <-Test!
         var posAntigua=[salas[salasPosicion[socket.salaActual]].posicionRaton[0],salas[salasPosicion[socket.salaActual]].posicionRaton[1]];
         var posNueva=[posAntigua[0]+1,posAntigua[1]]; //sube una fila
+
+        var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+
+        switch(celdaRaton) {
+                    
+                    case 'T':
+                    socket.puntaje=socket.puntaje-300;
+                    break;
+
+                    case 'O':
+                    socket.puntaje=socket.puntaje+100;
+                    break;
+
+                    case 'S':
+                    socket.puntaje=socket.puntaje+300;
+                    break;
+
+                    default:
+                    console.log('paso algo raro con el movimiento de '+socket.nickname);
+                    break;
+                  }
+
         //la posicion antes de mover el raton se reemplaza por su estado inicial
         salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
         //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
@@ -352,6 +403,7 @@ function requestForDown(socket){
         //se actualiza la posicion del raton
         salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
+        infoUsuario(socket);
         tableroActualizaSalaActual(socket);
         }
     });
@@ -369,6 +421,28 @@ function requestForRight(socket){
         //console.log('posicion antigua raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <-Test!
         var posAntigua=[salas[salasPosicion[socket.salaActual]].posicionRaton[0],salas[salasPosicion[socket.salaActual]].posicionRaton[1]];
         var posNueva=[posAntigua[0],posAntigua[1]+1]; //sube una fila
+
+        var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+
+        switch(celdaRaton) {
+                    
+                    case 'T':
+                    socket.puntaje=socket.puntaje-300;
+                    break;
+
+                    case 'O':
+                    socket.puntaje=socket.puntaje+100;
+                    break;
+
+                    case 'S':
+                    socket.puntaje=socket.puntaje+300;
+                    break;
+
+                    default:
+                    console.log('paso algo raro con el movimiento de '+socket.nickname);
+                    break;
+                  }
+
         //la posicion antes de mover el raton se reemplaza por su estado inicial
         salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
         //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
@@ -378,6 +452,7 @@ function requestForRight(socket){
         //se actualiza la posicion del raton
         salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
+        infoUsuario(socket);
         tableroActualizaSalaActual(socket);
         }
     });
@@ -396,6 +471,27 @@ function requestForLeft(socket){
         //console.log('posicion antigua raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <-Test!
         var posAntigua=[salas[salasPosicion[socket.salaActual]].posicionRaton[0],salas[salasPosicion[socket.salaActual]].posicionRaton[1]];
         var posNueva=[posAntigua[0],posAntigua[1]-1]; //sube una fila
+
+        var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+
+        switch(celdaRaton) {
+                    
+                    case 'T':
+                    socket.puntaje=socket.puntaje-300;
+                    break;
+
+                    case 'O':
+                    socket.puntaje=socket.puntaje+100;
+                    break;
+
+                    case 'S':
+                    socket.puntaje=socket.puntaje+300;
+                    break;
+
+                    default:
+                    console.log('paso algo raro con el movimiento de '+socket.nickname);
+                    break;
+                  }
         //la posicion antes de mover el raton se reemplaza por su estado inicial
         salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
         //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
@@ -405,6 +501,7 @@ function requestForLeft(socket){
         //se actualiza la posicion del raton
         salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
+        infoUsuario(socket);
         tableroActualizaSalaActual(socket);
         }
     });

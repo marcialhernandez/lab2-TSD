@@ -271,7 +271,7 @@ function main(){
       });
 
       socket.on('infoUsuario', function(data){
-        $('#bloqueUsuario').html('Jugador: '+data[0]+'<br/>'+'Sala Actual: '+data[1]);
+        $('#bloqueUsuario').html('Jugador: '+data[0]+'<br/>'+'Sala Actual: '+data[1] + '<br/>'+'Puntaje: '+data[2]);
       });
 
       socket.on('tableroSalaActual', function(data){
