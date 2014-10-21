@@ -121,6 +121,12 @@ app.get('/', function(req, res){
         if (salas[salasPosicion[socket.salaActual]].jugadores.length==0) {
           salas[salasPosicion[socket.salaActual]].turnoActual=socket.nickname;
           console.log('turno sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
+          //----------------------------------------------------------------------------------------------------
+          //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+          var confirmacion=true;
+          nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+          //-----------------------------------------------------------------------------------------------------
+
         }
         //Se debe agregar el usuario a la informacion de la sala actual
         //A la lista de jugadores de la  sala actual, se le pushea el nombre del jugador actual
@@ -209,7 +215,25 @@ function cambioDeSala(socket){
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala '+socket.salaActual;
+
+      //Y hay que regestionar el turno de la sala antigua---------------------------------------
+        var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+        if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+        }
+        else{
+          salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+        }
+
+        //Si la sala antigua no queda vacia, envio el turno de esa sala a la persona que le toca jugar
+        var confirmacion2=true;
+        if(salas[salasPosicion[socket.salaActual]].jugadores.length!=0){
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion2);
+        }
+
+
       //-----------------------------------------------------------------------------------------
+
       //Aqui hay que quitar al usuario de la lista de jugadores activos que tiene la sala actual
       //para ello se obtiene la posicion que tiene el nombre del jugador en la lista de jugadores de la sala
       var posicionAEliminar=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(socket.nickname);
@@ -218,10 +242,6 @@ function cambioDeSala(socket){
       salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
       console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
 
-      //Y hay que regestionar el turno de la sala antigua
-
-
-      //-----------------------------------------------------------------------------------------
 
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
       //salgo de la sala actual
@@ -238,6 +258,11 @@ function cambioDeSala(socket){
       if (salas[salasPosicion[socket.salaActual]].jugadores.length==0) {
           salas[salasPosicion[socket.salaActual]].turnoActual=socket.nickname;
           console.log('turno sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
+          //----------------------------------------------------------------------------------------------------
+          //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+          var confirmacion=true;
+          nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+          //---------
         }
 
       //Se debe agregar el usuario a la informacion de la sala actual
@@ -418,6 +443,7 @@ function requestForUp(socket){
         caso contrario:
         --->turno actual = lista[Jugadores][0]*/
 
+
         var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
         if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
           salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
@@ -425,6 +451,17 @@ function requestForUp(socket){
         else{
           salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
         }
+
+        //----------------------------------------------------------------------------------------------------
+        //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+        var confirmacion=true;
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+        //-----------------------------------------------------------------------------------------------------
+
+        //Emitir un mensaje a la sala actual que mencione a la persona que le toca jugar
+        var mensajeSala='[System]: Turno de '+ salas[salasPosicion[socket.salaActual]].turnoActual;
+        io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeSala); //emitir un mensaje que diga el turno actual del jugador
+
 
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
@@ -513,6 +550,16 @@ function requestForDown(socket){
           salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
         }
 
+        //----------------------------------------------------------------------------------------------------
+        //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+        var confirmacion=true;
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+        //-----------------------------------------------------------------------------------------------------
+
+        //Emitir un mensaje a la sala actual que mencione a la persona que le toca jugar
+        var mensajeSala='[System]: Turno de '+ salas[salasPosicion[socket.salaActual]].turnoActual;
+        io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeSala); //emitir un mensaje que diga el turno actual del jugador
+
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
@@ -595,6 +642,16 @@ function requestForRight(socket){
           salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
         }
 
+        //----------------------------------------------------------------------------------------------------
+        //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+        var confirmacion=true;
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+        //-----------------------------------------------------------------------------------------------------
+
+        //Emitir un mensaje a la sala actual que mencione a la persona que le toca jugar
+        var mensajeSala='[System]: Turno de '+ salas[salasPosicion[socket.salaActual]].turnoActual;
+        io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeSala); //emitir un mensaje que diga el turno actual del jugador
+
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
@@ -675,6 +732,16 @@ function requestForLeft(socket){
         else{
           salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
         }
+
+        //----------------------------------------------------------------------------------------------------
+        //Emitir un mensaje a la persona que le toca jugar, las confirmaciones Siempre seran true
+        var confirmacion=true;
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+        //-----------------------------------------------------------------------------------------------------
+
+        //Emitir un mensaje a la sala actual que mencione a la persona que le toca jugar
+        var mensajeSala='[System]: Turno de '+ salas[salasPosicion[socket.salaActual]].turnoActual;
+        io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeSala); //emitir un mensaje que diga el turno actual del jugador
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
@@ -697,6 +764,26 @@ function usuarioDesconectado(socket){
      //ejemplo obtenido de ayudantia clase 3
      //eliminar usuario de nickNamesUsados = [] y nickSocket={} 
     console.log('EL usuario '+socket.nickname+ ' se ha desconectado...');
+
+    //Y hay que regestionar el turno de la sala---------------------------------------
+    var posicionTurno=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(salas[salasPosicion[socket.salaActual]].turnoActual);
+    if(posicionTurno!=salas[salasPosicion[socket.salaActual]].jugadores.length-1){
+      salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[posicionTurno+1];
+    }
+      else{
+      salas[salasPosicion[socket.salaActual]].turnoActual=salas[salasPosicion[socket.salaActual]].jugadores[0];
+    }
+
+      //Si la sala antigua no queda vacia, envio el turno de esa sala a la persona que le toca jugar
+      var confirmacion=true;
+      if(salas[salasPosicion[socket.salaActual]].jugadores.length!=0){
+        nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
+      }
+
+
+      //-----------------------------------------------------------------------------------------
+
+      //-----------------------------------------------------------------------------------------
     //Aqui hay que quitar al usuario de la lista de jugadores activos que tiene la sala actual
     //para ello se obtiene la posicion que tiene el nombre del jugador en la lista de jugadores de la sala
     var posicionAEliminar=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(socket.nickname);

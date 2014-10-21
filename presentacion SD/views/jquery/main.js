@@ -35,8 +35,14 @@ function main(){
           socket.emit('requestForLogin', $('#nickname').val(), function(data){
             //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
             if(data){
+
               $('#loginListo').hide();//se oculta el registro
               $('#juegoListo').show();//se muestra la sala de chat  
+              document.getElementById("botonLeft").disabled = true;
+              document.getElementById("botonRight").disabled = true;
+              document.getElementById("botonUp").disabled = true;
+              document.getElementById("botonDown").disabled = true;
+
                 //document.getElementById("enviarMensaje").disabled = true;   
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
@@ -196,7 +202,11 @@ function main(){
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
             else{
-              window.alert("cambio de turno");
+              document.getElementById("botonLeft").disabled = true;
+              document.getElementById("botonRight").disabled = true;
+              document.getElementById("botonUp").disabled = true;
+              document.getElementById("botonDown").disabled = true;
+              //window.alert("cambio de turno");
             }
           });
 
@@ -213,7 +223,11 @@ function main(){
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
             else{
-              window.alert("cambio de turno");
+              document.getElementById("botonLeft").disabled = true;
+              document.getElementById("botonRight").disabled = true;
+              document.getElementById("botonUp").disabled = true;
+              document.getElementById("botonDown").disabled = true;
+              //window.alert("cambio de turno");
             }
           });
           
@@ -229,7 +243,11 @@ function main(){
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
             else{
-              window.alert("cambio de turno");
+              document.getElementById("botonLeft").disabled = true;
+              document.getElementById("botonRight").disabled = true;
+              document.getElementById("botonUp").disabled = true;
+              document.getElementById("botonDown").disabled = true;
+              //window.alert("cambio de turno");
             }
           });
           
@@ -246,7 +264,11 @@ function main(){
             }
             //si no, se muestra el error y se solicita un nuevo ingreso de usuario
             else{
-              window.alert("cambio de turno");
+              document.getElementById("botonLeft").disabled = true;
+              document.getElementById("botonRight").disabled = true;
+              document.getElementById("botonUp").disabled = true;
+              document.getElementById("botonDown").disabled = true;
+              //window.alert("cambio de turno");
             }
           });
           
@@ -266,6 +288,23 @@ function main(){
         })
 
       /*------------Fin de Boton de Logout ----------------*/
+
+      //emit('turnoParaJugar', confirmacion);
+
+      socket.on('turnoParaJugar', function(data){
+        //Siempre es true
+        if (data==true){
+              document.getElementById("botonLeft").disabled = false;
+              document.getElementById("botonRight").disabled = false;
+              document.getElementById("botonUp").disabled = false;
+              document.getElementById("botonDown").disabled = false;
+        }
+        /*usuariosOnline = '';
+        for(var i=0; i<data.length; i++){
+          usuariosOnline += data[i]+'<br/>'
+        }
+        $('#panelConectados').html(usuariosOnline); //se guardan en el apartado dejado para los usuarios en el html*/
+      });
 
       socket.on('usuariosConectados', function(data){
         usuariosOnline = '';
