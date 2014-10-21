@@ -304,34 +304,49 @@ function requestForUp(socket){
         var posNueva=[posAntigua[0]-1,posAntigua[1]]; //sube una fila
 
         var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+        //la posicion antes de mover el raton se reemplaza por su estado inicial
+        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
 
         switch(celdaRaton) {
                     
                     case 'T':
                     socket.puntaje=socket.puntaje-300;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     case 'O':
                     socket.puntaje=socket.puntaje+100;
+                
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     case 'S':
                     socket.puntaje=socket.puntaje+300;
+                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+
                     break;
 
                     default:
                     console.log('paso algo raro con el movimiento de '+socket.nickname);
                     break;
                   }
-
-        //la posicion antes de mover el raton se reemplaza por su estado inicial
-        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
-        //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-        salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-        //se reemplaza la posicion nueva por el raton
-        salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-        //se actualiza la posicion del raton
-        salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
 
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
@@ -374,19 +389,42 @@ function requestForDown(socket){
         var posNueva=[posAntigua[0]+1,posAntigua[1]]; //sube una fila
 
         var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+        //la posicion antes de mover el raton se reemplaza por su estado inicial
+        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
 
         switch(celdaRaton) {
                     
                     case 'T':
                     socket.puntaje=socket.puntaje-300;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     case 'O':
                     socket.puntaje=socket.puntaje+100;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     case 'S':
                     socket.puntaje=socket.puntaje+300;
+                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+
                     break;
 
                     default:
@@ -394,14 +432,7 @@ function requestForDown(socket){
                     break;
                   }
 
-        //la posicion antes de mover el raton se reemplaza por su estado inicial
-        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
-        //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-        salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-        //se reemplaza la posicion nueva por el raton
-        salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-        //se actualiza la posicion del raton
-        salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
@@ -423,19 +454,41 @@ function requestForRight(socket){
         var posNueva=[posAntigua[0],posAntigua[1]+1]; //sube una fila
 
         var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+        //la posicion antes de mover el raton se reemplaza por su estado inicial
+        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
 
         switch(celdaRaton) {
                     
                     case 'T':
                     socket.puntaje=socket.puntaje-300;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     case 'O':
                     socket.puntaje=socket.puntaje+100;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     case 'S':
                     socket.puntaje=socket.puntaje+300;
+                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     default:
@@ -443,14 +496,6 @@ function requestForRight(socket){
                     break;
                   }
 
-        //la posicion antes de mover el raton se reemplaza por su estado inicial
-        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
-        //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-        salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-        //se reemplaza la posicion nueva por el raton
-        salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-        //se actualiza la posicion del raton
-        salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
@@ -473,33 +518,47 @@ function requestForLeft(socket){
         var posNueva=[posAntigua[0],posAntigua[1]-1]; //sube una fila
 
         var celdaRaton=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+        //la posicion antes de mover el raton se reemplaza por su estado inicial
+        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
 
         switch(celdaRaton) {
                     
                     case 'T':
                     socket.puntaje=socket.puntaje-300;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     case 'O':
                     socket.puntaje=socket.puntaje+100;
+                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     case 'S':
                     socket.puntaje=socket.puntaje+300;
+                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
+                    //se reemplaza la posicion nueva por el raton
+                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
                     default:
                     console.log('paso algo raro con el movimiento de '+socket.nickname);
                     break;
                   }
-        //la posicion antes de mover el raton se reemplaza por su estado inicial
-        salasTablero[socket.salaActual][posAntigua[0]][posAntigua[1]]=salas[salasPosicion[socket.salaActual]].posicionRatonAnterior;
-        //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-        salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-        //se reemplaza la posicion nueva por el raton
-        salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-        //se actualiza la posicion del raton
-        salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         infoUsuario(socket);
         tableroActualizaSalaActual(socket);
