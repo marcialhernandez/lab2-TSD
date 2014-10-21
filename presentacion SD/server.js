@@ -116,6 +116,14 @@ app.get('/', function(req, res){
         socket.join(salas[0].nombre); //se ingresa a la sala por defecto
         socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
         //este corresponde al tamanio de la lista de conectados antes de pertenecer a la lista
+        //-----------------------------------------------------------
+        //Se debe agregar el usuario a la informacion de la sala actual
+        //A la lista de jugadores de la  sala actual, se le pushea el nombre del jugador actual
+        salas[salasPosicion[socket.salaActual]].jugadores.push(socket.nickname);
+        //se muestra por consola la lista de jugadores que tiene la sala actual por consola ->Test
+        console.log('Jugadores sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
+        //---------------------------Falta gestionar el turno para el primer ingreso---------------------
+
         if(cantidadConectados>0){
           mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
           io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar); 
@@ -196,6 +204,19 @@ function cambioDeSala(socket){
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala '+socket.salaActual;
+      //-----------------------------------------------------------------------------------------
+      //Aqui hay que quitar al usuario de la lista de jugadores activos que tiene la sala actual
+      //para ello se obtiene la posicion que tiene el nombre del jugador en la lista de jugadores de la sala
+      var posicionAEliminar=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(socket.nickname);
+      //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
+      //de elementos a eliminar a partir la posicion mencionada
+      salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+      console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
+
+      //Y hay que regestionar el nuevo turno
+
+      //-----------------------------------------------------------------------------------------
+
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
       //salgo de la sala actual
       socket.leave(socket.salaActual);
@@ -205,6 +226,11 @@ function cambioDeSala(socket){
       console.log(socket.nickname+' ha ingresado a la sala '+socket.salaActual);
       //ingreso a la nueva sala
       socket.join(data);
+      //Se debe agregar el usuario a la informacion de la sala actual
+      //A la lista de jugadores de la  sala actual, se le pushea el nombre del jugador actual
+      salas[salasPosicion[socket.salaActual]].jugadores.push(socket.nickname);
+      console.log('Jugadores sala nueva '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
+
       //mensaje a todos los conectados
       mensajeAEnviar=socket.nickname+' ha creado la sala '+data;
       io.sockets.emit('receivingGeneralMessage', mensajeAEnviar);
@@ -218,6 +244,14 @@ function cambioDeSala(socket){
       mensajeAEnviar=socket.nickname+' ha salido de la sala';
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
 
+      //Aqui hay que quitar al usuario de la lista de jugadores activos que tiene la sala actual
+      //para ello se obtiene la posicion que tiene el nombre del jugador en la lista de jugadores de la sala
+      var posicionAEliminar=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(socket.nickname);
+      //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
+      //de elementos a eliminar a partir la posicion mencionada
+      salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+      console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
+
        //salgo de la sala actual
       socket.leave(socket.salaActual);
       //asocio la nueva sala
@@ -225,6 +259,8 @@ function cambioDeSala(socket){
       //ingreso a la nueva sala
       socket.join(data);
       console.log(socket.nickname+' ha ingresado a la sala '+socket.salaActual);
+      salas[salasPosicion[socket.salaActual]].jugadores.push(socket.nickname);
+      console.log('Jugadores sala nueva '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
 
       //envio un mensaje a todos los conectados en la sala actual
       mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
@@ -588,6 +624,13 @@ function usuarioDesconectado(socket){
      //ejemplo obtenido de ayudantia clase 3
      //eliminar usuario de nickNamesUsados = [] y nickSocket={} 
     console.log('EL usuario '+socket.nickname+ ' se ha desconectado...');
+    //Aqui hay que quitar al usuario de la lista de jugadores activos que tiene la sala actual
+    //para ello se obtiene la posicion que tiene el nombre del jugador en la lista de jugadores de la sala
+    var posicionAEliminar=salas[salasPosicion[socket.salaActual]].jugadores.indexOf(socket.nickname);
+    //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
+    //de elementos a eliminar a partir la posicion mencionada
+    salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+    console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
     var posicionAEliminar=nickNamesUsados.indexOf(socket.nickname);
     //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
     //de elementos a eliminar a partir la posicion mencionada
@@ -618,7 +661,7 @@ function usuarioDesconectado(socket){
     }
 
     else{
-      console.log('Se ha salido de la pagina de login sin ingresar');
+      console.log('Se ha salido de la web sin ingresar');
     }
 
   });
