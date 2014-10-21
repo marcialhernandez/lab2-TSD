@@ -15,7 +15,6 @@ var bodyParser = require('body-parser')
   , mensajeDeVuelta;
 
 agregarSala('porDefecto',salas, salasPosicion);
-asignarTablero(salasTablero, salas[0].nombre);//Asigno tablero en la sala por defecto
 
 app.use("/views", express.static(__dirname + '/views'));
 
@@ -103,12 +102,24 @@ app.get('/', function(req, res){
         // Guardamos el nick del usuario, para luego poder mostrarlo
         socket.nickname = data;
         socket.puntaje = 0;
+        var cantidadConectados=nickNamesUsados.length;
+        //si la cantidad de usuarios es 0
+        if(cantidadConectados==0){
+          asignarTablero(salasTablero, salas[0].nombre);//Asigno tablero en la sala por defecto
+          //se debe a que si todos se deslogean, la sala por defecto se resetea
+        }
+
         //se crea un buzon para el nickName creado
         nickSocket[socket.nickname]=socket;
         // Agregamos al usuario al arreglo de conectados
         nickNamesUsados.push(socket.nickname);
         socket.join(salas[0].nombre); //se ingresa a la sala por defecto
         socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+        //este corresponde al tamanio de la lista de conectados antes de pertenecer a la lista
+        if(cantidadConectados>0){
+          mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
+          io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar); 
+        }
 
         console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
         console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
@@ -578,15 +589,34 @@ function usuarioDesconectado(socket){
      //eliminar usuario de nickNamesUsados = [] y nickSocket={} 
     console.log('EL usuario '+socket.nickname+ ' se ha desconectado...');
     var posicionAEliminar=nickNamesUsados.indexOf(socket.nickname);
-    var ultimoMensaje='[System]: El usuario '+socket.nickname+' se ha desconectado.';
-    //se manda un mensaje global avisando que el usuario se ha desconectado
-    io.sockets.emit('receivingGeneralMessage', ultimoMensaje);
     //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
     //de elementos a eliminar a partir la posicion mencionada
     nickNamesUsados.splice(posicionAEliminar,1);
     delete nickSocket[socket.nickname];
-    usuariosConectados();
+
+      if(nickNamesUsados.length==0){
+          /*while(salas.length > 0) { //forma tradicional de vaciar listas y diccionarios
+            salas.pop();
+          }
+          for (var clave in salasTablero) delete salasTablero[clave];
+          for (var clave in salasPosicion) delete salasPosicion[clave];*/
+
+          salas = []; //se resetea la lista de salas
+          salasTablero={};
+          salasPosicion={};
+          agregarSala('porDefecto',salas, salasPosicion);
+          //se debe a que si todos se deslogean, el juego en si se resetea
+        }
+
+      else{
+          var ultimoMensaje='[System]: El usuario '+socket.nickname+' se ha desconectado.';
+          //se manda un mensaje global avisando que el usuario se ha desconectado
+          io.sockets.emit('receivingGeneralMessage', ultimoMensaje);
+          usuariosConectados();
+
+      }
     }
+
     else{
       console.log('Se ha salido de la pagina de login sin ingresar');
     }
