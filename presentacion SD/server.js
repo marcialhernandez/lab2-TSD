@@ -357,16 +357,69 @@ function salasActivas(){
 
 //Emito la matriz que esta asociada a la sala que esta asociada al socket actual
 function tableroSalaActual(socket){
-    socket.emit('tableroSalaActual', salasTablero[socket.salaActual]);
+      socket.emit('tableroSalaActual', mostrarTablero(salas[salasPosicion[socket.salaActual]],socket,salasTablero));
+    //socket.emit('tableroSalaActual', salasTablero[socket.salaActual]);
   }
 
 //Emito la matriz que esta asociada a la sala actual a todos los jugadores que estan en la sala
 function tableroActualizaSalaActual(socket){
     io.to(socket.salaActual).emit('tableroSalaActual', salasTablero[socket.salaActual]);
+    /*  var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
+  for (var cadaJugador=0;cadaJugador<cantidadJugadores;cadaJugador++){
+    tableroSalaActual(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
+    }
+  }*/
   }
 
 /*-------------------------------------------------------------------------
 /*------------------Funciones respecto al juego--------------------------*/
+
+//this.nombre = nombre; //string, nombre de la sala
+//    this.posicionRaton=[0,0]; //[x,y] con x = Fila e y =Columna numeros enteros, al principio siempre esta en esta posicion
+//    this.jugadores=[]; //lista con los jugadores
+//    this.turnoActual=''; //nick del jugador que le toca jugar
+//    this.posicionRatonAnterior='O'; //guarda la pos anterior, antes de haber pisado la casilla actual
+//    this.puntaje=10000;
+
+function mostrarTablero(sala,socket,diccionarioSalaTablero){
+  //si la cantidad de jugadores en la sala actual es de 1
+  var posJugador=sala.jugadores.indexOf(socket.nickname);
+  var tableroAMostrar=[];
+  if (sala.jugadores.length==1){
+    return diccionarioSalaTablero[sala.nombre]; 
+  }
+
+  //veo en que posicion esta el jugador actual en la lista de jugadores
+
+  else if(sala.jugadores.length==2){
+    //veo en que posicion esta el jugador actual en la lista de jugadores
+    if(posJugador==0){
+      tableroAMostrar=diccionarioSalaTablero[sala.nombre];
+      for (var x=0;x<10;x++){ //desde la fila 0
+        for(var y=5;y<10;y++){ //pero desde la columna 5
+          tableroAMostrar[x][y]='X'; //oculto la informacion
+        }
+      } 
+      return tableroAMostrar;
+    }
+
+    else{ //entonces la posicion del jugador es 1
+      tableroAMostrar=diccionarioSalaTablero[sala.nombre];
+      for (var x=0;x<10;x++){ //desde la fila 0
+        for(var y=0;y<5;y++){ //pero desde la columna 0 hasta la 4 
+          tableroAMostrar[x][y]='X'; //oculto la informacion
+        }
+      } 
+      return tableroAMostrar;
+    }
+
+  }//Fin condicion jugadores =2
+
+  else{ //para cualquier otro caso muestro el tablero completo
+        return diccionarioSalaTablero[sala.nombre]; 
+  }
+
+}//fin funcion mostrarTablero
 
 function asignarTablero(diccionarioSalas, nombreSala){
   diccionarioSalas[nombreSala]=inicializaTablero(); //inicializo un tablero en la sala de entrada
