@@ -1,7 +1,3 @@
-  /*var socket=io();
-  var usuarioLocal;
-  var ingresado=false;*/
-
 function main(){
 
         $('#juegoListo').hide();//se oculta el juego hasta que se haya logeado
@@ -310,6 +306,7 @@ function main(){
         $('#panelConectados').html(usuariosOnline); //se guardan en el apartado dejado para los usuarios en el html*/
       });
 
+      //Funcion que recibe informacion del servidor, imprime en el panel de conectados la lista obtenida desde el servidor
       socket.on('usuariosConectados', function(data){
         usuariosOnline = '';
         for(var i=0; i<data.length; i++){
@@ -318,6 +315,7 @@ function main(){
         $('#panelConectados').html(usuariosOnline); //se guardan en el apartado dejado para los usuarios en el html
       });
 
+      //Funcion que recibe informacion del servidor, imprime en el panel de salas, la lista obtenida desde el servidor
       socket.on('salasActivas', function(data){
         salasOnline = '';
         for(i=0; i<data.length; i++){
@@ -326,10 +324,13 @@ function main(){
         $('#panelSalas').html(salasOnline); //se guardan en el apartado dejado para los usuarios en el html
       });
 
+      //Funcion que recibe informacion del servidor, imprime en el apartado del usuario, la informacion obtenida desde el servior
       socket.on('infoUsuario', function(data){
         $('#bloqueUsuario').html('Jugador: '+data[0]+'<br/>'+'Sala Actual: '+data[1] + '<br/>'+'Puntaje: '+data[2]);
       });
 
+      //Funcion que recibe informacion del servidor, muestra en el apartado del tablero, la matriz obtenida
+      //reemplazando los valores por su respectivo icono, cada vez que se requiera
       socket.on('tableroSalaActual', function(data){
         //recepcionar matriz y mostrar por vista
         var datosFila;
@@ -357,6 +358,8 @@ function main(){
         }//termino for por fila
       });
 
+      //Funcion que recibe informacion del servidor, obtiene un mensaje final y es emitido en la pantalla de la vista
+      //luego se auto-actualiza la pantalla, ingresando de nuevo al apartado de logeo
       socket.on('receivingFinalMessage', function(data){
         window.alert(data);
       });

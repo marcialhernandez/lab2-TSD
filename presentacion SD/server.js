@@ -26,7 +26,8 @@ app.get('/', function(req, res){
 
 });
 
-  io.sockets.on('connection', function(socket){ //Cada vez que un usuario se conecte              
+//Conjunto de servicios activos, esperando emisiones de la vista
+  io.sockets.on('connection', function(socket){
     usuariosConectados();
     salasActivas();
     inicioSesion(socket);
@@ -49,6 +50,7 @@ app.get('/', function(req, res){
 
   //-------------------------------------------------------------------------
 
+//Constructor que crea un objeto tipo sala
   function sala(nombre) {
     this.nombre = nombre; //string, nombre de la sala
     this.posicionRaton=[0,0]; //[x,y] con x = Fila e y =Columna numeros enteros, al principio siempre esta en esta posicion
@@ -58,7 +60,7 @@ app.get('/', function(req, res){
     this.puntaje=10000; //cada sala tiene un puntaje inicial de 10000
   }
 
-  sala.prototype = { //funcion propia del tipo sala
+  sala.prototype = { //funcion propia del tipo sala, agrega jugadores
     agregarJugador: function(nombreJugador) {
         this.jugadores.push(nombreJugador);
     }
@@ -159,7 +161,7 @@ app.get('/', function(req, res){
       }
     });
   }
-
+//Funcion que recibe un mensaje de la vista, y lo envia a todos los usuarios que estan en la misma sala
 function chatGeneral(socket){
   socket.on('sendingGeneralMessage', function(msg){
     msg='['+socket.nickname+']:'+msg;
@@ -168,6 +170,7 @@ function chatGeneral(socket){
   });
 }
 
+//Funcion que recibe un mensaje de un usuario, y  lo redirige a un determinado socket de determinado usuario
 function chatPrivado(socket){
   socket.on('sendingPrivateMessage', function(msg){
     console.log(msg.join('|')+' (MensajePrivado)');
@@ -185,6 +188,7 @@ function chatPrivado(socket){
   });
 }
 
+//Funcion que envia una lista de los usuarios conectados especificando en que sala estan
 function requestForInfoUsuarios(socket){
     socket.on('requestForInfoUsuarios', function(msg){
     var infoUsuarios = [];
@@ -195,11 +199,12 @@ function requestForInfoUsuarios(socket){
   })
 }
 
-
+//Funcion que envia una lista de los usuarios sin especificar la sala
 function usuariosConectados(){
     io.sockets.emit('usuariosConectados', nickNamesUsados);
   }
 
+//Funcion que envia la informacion actual de usuario a la vista
 function infoUsuario(socket){
   var infoPersonal=[];
   infoPersonal.push(socket.nickname);
@@ -208,6 +213,7 @@ function infoUsuario(socket){
     nickSocket[socket.nickname].emit('infoUsuario', infoPersonal);
   }
 
+//Funcion que actualiza la informacion de usuario de todos los usuarios conectados en la sala del usuario actual
 function actualizaJugadoresSala(socket){
   var infoPersonal=[];
   infoPersonal.push(socket.nickname);
@@ -216,6 +222,7 @@ function actualizaJugadoresSala(socket){
   io.to(socket.salaActual).emit('infoUsuario', infoPersonal);
   }
 
+//funcion que maneja el cambio de sala de un usuario, tras recibir una peticion, si no existe se crea, caso contrario, se une
 function cambioDeSala(socket){
     socket.on('requestForSala', function(data){ 
       var siEsta=false;
@@ -349,6 +356,7 @@ function cambioDeSala(socket){
     });
   }
 
+//Funcion que envia a todos los usuarios conectados, una lista con las salas activas
 function salasActivas(){
     var nombreSalas=[];
     for (var i=0;i<salas.length;i++){
@@ -362,9 +370,6 @@ function tableroSalaPersonal(socket){
      socket.emit('tableroSalaActual', mostrarTablero(salas[salasPosicion[socket.salaActual]],socket,salasTablero));
     //socket.emit('tableroSalaActual', salasTablero[socket.salaActual]);
   }
-
-//tableroSalaActual nombre funcion a gestionar
-
 
 //Emito la matriz que esta asociada a la sala actual a todos los jugadores que estan en la sala
 function tableroSalaActual(socket){
@@ -382,13 +387,7 @@ var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
 /*-------------------------------------------------------------------------
 /*------------------Funciones respecto al juego--------------------------*/
 
-//this.nombre = nombre; //string, nombre de la sala
-//    this.posicionRaton=[0,0]; //[x,y] con x = Fila e y =Columna numeros enteros, al principio siempre esta en esta posicion
-//    this.jugadores=[]; //lista con los jugadores
-//    this.turnoActual=''; //nick del jugador que le toca jugar
-//    this.posicionRatonAnterior='O'; //guarda la pos anterior, antes de haber pisado la casilla actual
-//    this.puntaje=10000;
-
+//Funcion que copia una matriz de valores, y retorna la misma matriz pero con una referencia de memoria diferente
 function copiaPorValor(matrizACopiar){
   var nuevaMatriz=[];
   for(var i=0;i<matrizACopiar.length;i++){
@@ -397,7 +396,7 @@ function copiaPorValor(matrizACopiar){
   return nuevaMatriz;
 }
 
-
+//Funcion que gestiona la visibilidad del tablero actual de la sala, dependiendo de la cantidad de usuarios de la misma
 function mostrarTablero(sala,socket,diccionarioSalaTablero){
   //si la cantidad de jugadores en la sala actual es de 1
   var posJugador=sala.jugadores.indexOf(socket.nickname);
@@ -592,10 +591,12 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
     }//Fin condicion jugadores =4
 }//fin funcion mostrarTablero
 
+//Funcion que asigna un tablero a un nombre de sala pasado por argumento, a un diccionario tambien pasado por argumento
 function asignarTablero(diccionarioSalas, nombreSala){
   diccionarioSalas[nombreSala]=inicializaTablero(); //inicializo un tablero en la sala de entrada
 }
 
+//Funcion que crea un tablero, con 1 Raton, 1 salida, 15 trampas fijas, existe la posibibilidad que la salida sobreescriba una trampa
 function inicializaTablero(){
   var tablero = [];
   for(var i=0; i<10; i++) {
@@ -622,11 +623,13 @@ function inicializaTablero(){
 
 }//Fin funcion inicializarTablero
 
+//Funcion que genera un numero random, entero en un determinado rango (incluye los numeros del rango)
 //http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+//Funcion que gestiona la peticion del usuario para aumentar 1 posicion hacia arriba del raton del tablero
 function requestForUp(socket){
     socket.on('requestForUp', function(callback){  
       var confirmaFinal=false; //bandera que avisa si se termino o no el juego
@@ -738,6 +741,7 @@ function requestForUp(socket){
     });
   }
 
+//Funcion que gestiona la peticion del usuario para disminuir 1 posicion hacia abajo del raton del tablero
 function requestForDown(socket){
     socket.on('requestForDown', function(callback){  
       var confirmaFinal=false; //bandera que avisa si se termino o no el juego
@@ -844,6 +848,7 @@ function requestForDown(socket){
     });
   }
 
+//Funcion que gestiona la peticion del usuario para aumentar 1 posicion hacia la derecha del raton del tablero
 function requestForRight(socket){
     socket.on('requestForRight', function(callback){  
       var confirmaFinal=false; //bandera que avisa si se termino o no el juego
@@ -949,6 +954,8 @@ function requestForRight(socket){
         }
     });
   }
+
+//Funcion que gestiona la peticion del usuario para aumentar 1 posicion hacia la izquierda del raton del tablero
 
 function requestForLeft(socket){
     socket.on('requestForLeft', function(callback){  
@@ -1058,12 +1065,14 @@ function requestForLeft(socket){
     });
   }
 
+//Funcion que utiliza la funcion de deslogeo, en caso que llegue una peticion de deslog de la vista
 function requestForLogout(socket){
     socket.on('requestForLogout', function(){  
       usuarioDesconectado(socket);        
     });
   }
 
+//Funcion que gestiona el deslog del usuario, ya sea por peticion o por perdida abrupta de la conexion con algun usuario activo
 function usuarioDesconectado(socket){
   socket.on('disconnect', function () {
     if(socket.nickname!=undefined){
