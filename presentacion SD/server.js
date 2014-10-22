@@ -443,10 +443,153 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
 
   }//Fin condicion jugadores =2
 
-  else{ //para cualquier otro caso muestro el tablero completo
-        return diccionarioSalaTablero[sala.nombre]; 
-  }
+    else if(sala.jugadores.length==3){ //Si hay 3 jugadores en la sala actual
+    //veo en que posicion esta el jugador actual en la lista de jugadores
+    if(posJugador==0){
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0;x<10;x++){ //desde la fila 0
+        for(var y=3;y<10;y++){ //pero desde la columna 5
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
 
+    else if(posJugador==1){ //entonces la posicion del jugador es 1
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0;x<10;x++){ //desde la fila 0
+          for(var y=0, k=7;y<3 && k<10;y++,k++){ //pero desde la columna 0 hasta la 4 
+            if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+              tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[x][k] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+              tableroAMostrar[x][k]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+    else { //entonces la posicion del jugador es 2
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0;x<10;x++){ //desde la fila 0
+          for(var y=0;y<7;y++){ //pero desde la columna 0 hasta la 4 
+            if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+              tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+  }//Fin condicion jugadores =3
+
+  else{ //Entonces hay 4 jugadores
+        //return diccionarioSalaTablero[sala.nombre]; 
+
+    //veo en que posicion esta el jugador actual en la lista de jugadores
+    if(posJugador==0){
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=5, j=0, z=5; x<10 && j<5 && z<10;x++,j++,z++){ //desde la fila 0 //Asi obtengo el primer 4to
+        for(var y=0, k=5, n=5; y<5 && k<10 && n<10;y++,k++,n++){ //pero desde la columna 5
+
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[j][k] != '@' && tableroAMostrar[j][k] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[j][k]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[z][n] != '@' && tableroAMostrar[z][n] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[z][n]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+    else if(posJugador==1){ //entonces la posicion del jugador es 1
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0, j=5, z=5; x<5 && j<10 && z<10;x++,j++,z++){ //desde la fila 0 //Asi obtengo el primer 4to
+        for(var y=0, k=0, n=5; y<5 && k<5 && n<10;y++,k++,n++){ //pero desde la columna 5
+
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[j][k] != '@' && tableroAMostrar[j][k] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[j][k]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[z][n] != '@' && tableroAMostrar[z][n] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[z][n]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+    else if(posJugador==2) { //entonces la posicion del jugador es 2
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0, j=0, z=5; x<5 && j<5 && z<10;x++,j++,z++){ //desde la fila 0 //Asi obtengo el primer 4to
+        for(var y=0, k=5, n=5; y<5 && k<10 && n<10;y++,k++,n++){ //pero desde la columna 5
+
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[j][k] != '@' && tableroAMostrar[j][k] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[j][k]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[z][n] != '@' && tableroAMostrar[z][n] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[z][n]='X'; //oculto la informacion
+          }
+        }
+      } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+    else { //entonces la posicion del ultimo jugador
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
+      for (var x=0, j=0, z=5; x<5 && j<5 && z<10;x++,j++,z++){ //desde la fila 0 //Asi obtengo el primer 4to
+        for(var y=0, k=5, n=0; y<5 && k<10 && n<5;y++,k++,n++){ //pero desde la columna 5
+
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[j][k] != '@' && tableroAMostrar[j][k] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[j][k]='X'; //oculto la informacion
+          }
+
+          if(tableroAMostrar[z][n] != '@' && tableroAMostrar[z][n] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[z][n]='X'; //oculto la informacion
+          }
+        }
+      }  
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
+      return tableroAMostrar;
+    }
+
+    }//Fin condicion jugadores =4
 }//fin funcion mostrarTablero
 
 function asignarTablero(diccionarioSalas, nombreSala){
@@ -462,8 +605,8 @@ function inicializaTablero(){
     }
   }
 
-  //Se agregan 7 trampas al inicio
-  for (var i=0;i<7;i++){
+  //Se agregan 15 trampas al inicio
+  for (var i=0;i<15;i++){
     //Math.floor(Math.random() * 9) = numero aleatorio entre 0 y 9
     tablero[getRandomInt(0, 9)][getRandomInt(0, 9)]='T'// T de trampa
   }
