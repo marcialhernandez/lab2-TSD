@@ -179,10 +179,12 @@ function main(){
 
         socket.on('receivingGeneralMessage', function(msg){
         $('#mensajesPosteados').append($('<p class="text-left">').text(msg));
+        $("#chat").scrollTop($("#chat")[0].scrollHeight); //Esto es necesario para que, para cada mensaje nuevo, se vea el ultimo enviado
       });
 
         socket.on('returnMensajePrivado', function(msg){
         $('#mensajesPosteados').append($('<p class="text-left">').text(msg));
+        $("#chat").scrollTop($("#chat")[0].scrollHeight); //Esto es necesario para que, para cada mensaje nuevo, se vea el ultimo enviado
       });
 
       /*------------Boton MensajeChat ----------------*/
