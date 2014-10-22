@@ -33,7 +33,8 @@ function main(){
 
         else{
           //emitimos un mensaje al servidor de que hay un nuevo usuario
-          socket.emit('requestForLogin', $('#nickname').val(), function(data){
+          //ademas se le quitan los espacios
+          socket.emit('requestForLogin', $('#nickname').val().replace(/\s/g, "") , function(data){
             //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
             if(data){
 

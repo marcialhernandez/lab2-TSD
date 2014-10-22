@@ -89,7 +89,7 @@ app.get('/', function(req, res){
         //id_room = null;
         //enviamos true al cliente
         callback(true);
-        // Guardamos el nick del usuario, para luego poder mostrarlo
+        // Guardamos el nick del usuario, sin espacios en caso que los tenga
         socket.nickname = data;
         var cantidadConectados=nickNamesUsados.length;
         //si la cantidad de usuarios es 0
