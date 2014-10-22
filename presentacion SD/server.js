@@ -258,6 +258,7 @@ function cambioDeSala(socket){
       //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
       //de elementos a eliminar a partir la posicion mencionada
       salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+      tableroSalaActual(socket); //antes de salir de la sala debo actualizar la visualizacion de las celdas de la sala antigua
       console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
 
 
@@ -321,6 +322,7 @@ function cambioDeSala(socket){
       //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
       //de elementos a eliminar a partir la posicion mencionada
       salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+      tableroSalaActual(socket); //antes de salir de la sala debo actualizar la visualizacion de las celdas de la sala antigua
       console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
 
        //salgo de la sala actual
@@ -953,6 +955,8 @@ function usuarioDesconectado(socket){
     //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
     //de elementos a eliminar a partir la posicion mencionada
     salas[salasPosicion[socket.salaActual]].jugadores.splice(posicionAEliminar,1);
+    tableroSalaActual(socket); //antes de salir de la sala debo actualizar la visualizacion de las celdas de la sala antigua
+
     console.log('Jugadores sala antigua '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].jugadores); //->Test
     var posicionAEliminar=nickNamesUsados.indexOf(socket.nickname);
     //funcion que elimina elementos de un array, primer argumento es la posicion a eliminar, segundo argumento es la cantidad
