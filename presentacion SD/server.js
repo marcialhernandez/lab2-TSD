@@ -53,6 +53,7 @@ app.get('/', function(req, res){
     this.jugadores=[]; //lista con los jugadores
     this.turnoActual=''; //nick del jugador que le toca jugar
     this.posicionRatonAnterior='O'; //guarda la pos anterior, antes de haber pisado la casilla actual
+    this.puntaje=10000; //cada sala tiene un puntaje inicial de 10000
   }
 
   sala.prototype = { //funcion propia del tipo sala
@@ -60,13 +61,6 @@ app.get('/', function(req, res){
         this.jugadores.push(nombreJugador);
     }
   };
-
-  /* no funciona investigar
-    sala.prototype = { //funcion propia del tipo sala
-    ratonY: function() {
-        return this.posicionRaton[0];
-    }
-  };*/
 
   //agrega una sala con un nombre dado a la lista de salas
   function agregarSala(nombreSalaNueva,listaDeSalas,diccionarioPosSalas){
@@ -79,12 +73,6 @@ app.get('/', function(req, res){
     //como atributo, pues se cumple que tamanio total lista-1 = ultimo elemento lista 
     listaDeSalas.push(nuevaSala);
   }
-
-  /*sala.prototype = { por implementar
-    quitarJugador: function(nombreJugador) {
-        this.jugadores.push(nombreJugador);
-    }
-  };*/
 
   //-------------------------------------------------------------------------
 
@@ -101,7 +89,6 @@ app.get('/', function(req, res){
         callback(true);
         // Guardamos el nick del usuario, para luego poder mostrarlo
         socket.nickname = data;
-        socket.puntaje = 0;
         var cantidadConectados=nickNamesUsados.length;
         //si la cantidad de usuarios es 0
         if(cantidadConectados==0){
@@ -194,8 +181,16 @@ function infoUsuario(socket){
   var infoPersonal=[];
   infoPersonal.push(socket.nickname);
   infoPersonal.push(socket.salaActual);
-  infoPersonal.push(socket.puntaje);
+  infoPersonal.push(salas[salasPosicion[socket.salaActual]].puntaje); //es el puntaje de la sala
     nickSocket[socket.nickname].emit('infoUsuario', infoPersonal);
+  }
+
+function actualizaJugadoresSala(socket){
+  var infoPersonal=[];
+  infoPersonal.push(socket.nickname);
+  infoPersonal.push(socket.salaActual);
+  infoPersonal.push(salas[salasPosicion[socket.salaActual]].puntaje); //es el puntaje de la sala
+  io.to(socket.salaActual).emit('infoUsuario', infoPersonal);
   }
 
 function cambioDeSala(socket){
@@ -374,6 +369,8 @@ function getRandomInt(min, max) {
 
 function requestForUp(socket){
     socket.on('requestForUp', function(callback){  
+      var confirmaFinal=false; //bandera que avisa si se termino o no el juego
+      var mensajeFinal; //variable donde se guardara el mensaje final en caso que sea el final
       //Si la fila del raton de la sala actual que se contiene en la lista de salas es 0
       //console.log('la posicion de la sala:'+socket.salaActual+' es '+salasPosicion[socket.salaActual]); Test
       //console.log(salas[salasPosicion[socket.salaActual]].posicionRaton[0]); Test
@@ -396,7 +393,7 @@ function requestForUp(socket){
         switch(celdaRaton) {
                     
                     case 'T':
-                    socket.puntaje=socket.puntaje-300;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-500;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
@@ -407,7 +404,7 @@ function requestForUp(socket){
                     break;
 
                     case 'O':
-                    socket.puntaje=socket.puntaje+100;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-100;
                 
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
@@ -417,16 +414,21 @@ function requestForUp(socket){
                     salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
                     break;
 
-                    case 'S':
-                    socket.puntaje=socket.puntaje+300;
-                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
-                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-                    //se reemplaza la posicion nueva por el raton
-                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-                    //se actualiza la posicion del raton
-                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+                    case 'S': //Se termina el juego
+                    var nombreSalaActual=socket.salaActual;
+                    var puntajeFinal=salas[salasPosicion[socket.salaActual]].puntaje;
+                    //se forma el mensaje y se envia a todos los usuarios de la sala
+                    mensajeFinal='El juego ha finalizado, en la sala '+nombreSalaActual+' han terminado con '+puntajeFinal+' puntos';
+                    io.to(socket.salaActual).emit('receivingFinalMessage',mensajeFinal);
 
+                    //reseteo el tablero actual
+                    asignarTablero(salasTablero, nombreSalaActual);
+                    salas[salasPosicion[nombreSalaActual]].puntaje=10000; //se resetea puntaje
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     default:
@@ -434,6 +436,7 @@ function requestForUp(socket){
                     break;
                   }
 
+        //Si no es el final, opera con naturalidad
         /*para cada peticion de movimiento de raton
         cada vez que haga un movimiento
         buscar la posicion del turno actual en la lista de jugadores
@@ -465,16 +468,19 @@ function requestForUp(socket){
 
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
-        infoUsuario(socket);
+        //infoUsuario(socket);
+        actualizaJugadoresSala(socket);
         tableroActualizaSalaActual(socket);
+
         }
       
     });
   }
 
-
 function requestForDown(socket){
     socket.on('requestForDown', function(callback){  
+      var confirmaFinal=false; //bandera que avisa si se termino o no el juego
+      var mensajeFinal; //variable donde se guardara el mensaje final en caso que sea el final
       if (salas[salasPosicion[socket.salaActual]].posicionRaton[0]==9){
         //console.log('movimiento invalido!!');
         callback(false);
@@ -496,7 +502,7 @@ function requestForDown(socket){
         switch(celdaRaton) {
                     
                     case 'T':
-                    socket.puntaje=socket.puntaje-300;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-500;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
@@ -507,7 +513,7 @@ function requestForDown(socket){
                     break;
 
                     case 'O':
-                    socket.puntaje=socket.puntaje+100;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-100;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
                     //se reemplaza la posicion nueva por el raton
@@ -517,15 +523,20 @@ function requestForDown(socket){
                     break;
 
                     case 'S':
-                    socket.puntaje=socket.puntaje+300;
-                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
-                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-                    //se reemplaza la posicion nueva por el raton
-                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
-                    //se actualiza la posicion del raton
-                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+                    var nombreSalaActual=socket.salaActual;
+                    var puntajeFinal=salas[salasPosicion[socket.salaActual]].puntaje;
+                    //se forma el mensaje y se envia a todos los usuarios de la sala
+                    mensajeFinal='El juego ha finalizado, en la sala '+nombreSalaActual+' han terminado con '+puntajeFinal+' puntos';
+                    io.to(socket.salaActual).emit('receivingFinalMessage',mensajeFinal);
 
+                    //reseteo el tablero actual
+                    asignarTablero(salasTablero, nombreSalaActual);
+                    salas[salasPosicion[nombreSalaActual]].puntaje=10000; //se resetea puntaje
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
+                    //se actualiza la posicion del raton
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     default:
@@ -563,14 +574,18 @@ function requestForDown(socket){
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
-        infoUsuario(socket);
+        //infoUsuario(socket);
+        actualizaJugadoresSala(socket);
         tableroActualizaSalaActual(socket);
+
         }
     });
   }
 
 function requestForRight(socket){
     socket.on('requestForRight', function(callback){  
+      var confirmaFinal=false; //bandera que avisa si se termino o no el juego
+      var mensajeFinal; //variable donde se guardara el mensaje final en caso que sea el final
       if (salas[salasPosicion[socket.salaActual]].posicionRaton[1]==9){
         //console.log('movimiento invalido!!');
         callback(false);
@@ -589,7 +604,7 @@ function requestForRight(socket){
         switch(celdaRaton) {
                     
                     case 'T':
-                    socket.puntaje=socket.puntaje-300;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-500;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
@@ -600,7 +615,7 @@ function requestForRight(socket){
                     break;
 
                     case 'O':
-                    socket.puntaje=socket.puntaje+100;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-100;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
                     //se reemplaza la posicion nueva por el raton
@@ -610,14 +625,24 @@ function requestForRight(socket){
                     break;
 
                     case 'S':
-                    socket.puntaje=socket.puntaje+300;
-                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
-                    //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
-                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-                    //se reemplaza la posicion nueva por el raton
-                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    var nombreSalaActual=socket.salaActual;
+                    var puntajeFinal=salas[salasPosicion[socket.salaActual]].puntaje;
+                    //se forma el mensaje y se envia a todos los usuarios de la sala
+                    mensajeFinal='El juego ha finalizado, en la sala '+nombreSalaActual+' han terminado con '+puntajeFinal+' puntos';
+                    io.to(socket.salaActual).emit('receivingFinalMessage',mensajeFinal);
+                    //se desconecta a cada usuario de la sala
+                    var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
+                    for (var cadaJugador=0;cadaJugador<cantidadJugadores;cadaJugador++){
+                      usuarioDesconectado(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
+                    }
+                    //reseteo el tablero actual
+                    asignarTablero(salasTablero, nombreSalaActual);
+                    salas[salasPosicion[nombreSalaActual]].puntaje=10000; //se resetea puntaje
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
                     //se actualiza la posicion del raton
-                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     default:
@@ -654,14 +679,18 @@ function requestForRight(socket){
 
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
-        infoUsuario(socket);
+        //infoUsuario(socket);
+        actualizaJugadoresSala(socket);
         tableroActualizaSalaActual(socket);
+
         }
     });
   }
 
 function requestForLeft(socket){
     socket.on('requestForLeft', function(callback){  
+      var confirmaFinal=false; //bandera que avisa si se termino o no el juego
+      var mensajeFinal; //variable donde se guardara el mensaje final en caso que sea el final
       if (salas[salasPosicion[socket.salaActual]].posicionRaton[1]==0){
         //console.log('movimiento invalido!!');
         callback(false);
@@ -681,7 +710,7 @@ function requestForLeft(socket){
         switch(celdaRaton) {
                     
                     case 'T':
-                    socket.puntaje=socket.puntaje-300;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-500;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     //Este caso, como es trampa, la posicion anterior sera 'O' pues no hay nada en la posicion inicial del raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
@@ -692,7 +721,7 @@ function requestForLeft(socket){
                     break;
 
                     case 'O':
-                    socket.puntaje=socket.puntaje+100;
+                    salas[salasPosicion[socket.salaActual]].puntaje=salas[salasPosicion[socket.salaActual]].puntaje-100;
                     //se guarda la posicion siguiente en la posicion antigua del tablero antes de ser reemplaza por el raton
                     salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
                     //se reemplaza la posicion nueva por el raton
@@ -702,13 +731,25 @@ function requestForLeft(socket){
                     break;
 
                     case 'S':
-                    socket.puntaje=socket.puntaje+300;
-                    //De momento La S realiza lo mismo que con O a diferencia del puntaje obtenido
-                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior=salasTablero[socket.salaActual][posNueva[0]][posNueva[1]];
-                    //se reemplaza la posicion nueva por el raton
-                    salasTablero[socket.salaActual][posNueva[0]][posNueva[1]]='@';
+                    var nombreSalaActual=socket.salaActual;
+                    var puntajeFinal=salas[salasPosicion[socket.salaActual]].puntaje;
+                    //se forma el mensaje y se envia a todos los usuarios de la sala
+                    mensajeFinal='El juego ha finalizado, en la sala '+nombreSalaActual+' han terminado con '+puntajeFinal+' puntos';
+
+                    io.to(socket.salaActual).emit('receivingFinalMessage',mensajeFinal);
+                    //se desconecta a cada usuario de la sala
+                    var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
+                    for (var cadaJugador=0;cadaJugador<cantidadJugadores;cadaJugador++){
+                      usuarioDesconectado(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
+                    }
+                    //reseteo el tablero actual
+                    asignarTablero(salasTablero, nombreSalaActual);
+                    salas[salasPosicion[nombreSalaActual]].puntaje=10000; //se resetea puntaje
+                    salas[salasPosicion[socket.salaActual]].posicionRatonAnterior='O';
+                    //se reemplaza la posicion inicial por el raton, pues volvio al inicio
+                    salasTablero[socket.salaActual][0][0]='@';
                     //se actualiza la posicion del raton
-                    salas[salasPosicion[socket.salaActual]].posicionRaton=posNueva;
+                    salas[salasPosicion[socket.salaActual]].posicionRaton=[0,0];
                     break;
 
                     default:
@@ -745,8 +786,10 @@ function requestForLeft(socket){
         console.log('turno Actual sala '+socket.salaActual+': '+salas[salasPosicion[socket.salaActual]].turnoActual); //->Test
 
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
-        infoUsuario(socket);
+        //infoUsuario(socket);
+        actualizaJugadoresSala(socket);
         tableroActualizaSalaActual(socket);
+      
         }
     });
   }

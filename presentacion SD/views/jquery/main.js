@@ -338,5 +338,9 @@ function main(){
         }//termino for por fila
       });
 
+      socket.on('receivingFinalMessage', function(data){
+        window.alert(data);
+      });
+
 /*Fin main()*/
 }
