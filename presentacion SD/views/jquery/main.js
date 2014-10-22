@@ -30,6 +30,7 @@ function main(){
           //Validar un ingreso vacio.
           window.alert("Debe ingresar nombre de usuario.");
         }
+
         else{
           //emitimos un mensaje al servidor de que hay un nuevo usuario
           socket.emit('requestForLogin', $('#nickname').val(), function(data){
@@ -332,7 +333,22 @@ function main(){
         for (var fila=0;fila<10;fila++){
         datosFila = ''; //para cada fila, se resetea la variable
           for(var columna=0; columna<10; columna++){
-            datosFila += '<td>'+data[fila][columna]+'</td>' //<td>1</td>
+            if (data[fila][columna]=='@'){
+              datosFila += '<td style="max-height: 24px; max-width: 7px; min-width: 7px;"><img src="views/img/icon-mouse.png" alt="" style="width:25px; height:25px;"></td>';
+              }
+            else if(data[fila][columna]=='S'){
+              datosFila += '<td style="max-height: 24px; max-width: 7px; min-width: 7px;"><img src="views/img/queso.gif" alt="" style="width:25px; height:25px;"></td>';
+            }
+            else if(data[fila][columna]=='T'){
+              datosFila += '<td style="max-height: 24px; max-width: 7px; min-width: 7px;"><img src="views/img/Trap.gif" alt="" style="width:24px; height:24px;"></td>';
+            }
+            else if(data[fila][columna]=='O'){
+            datosFila += '<td>_</td>'; //<td>1</td>
+            }
+            else //question-icon.png
+              {
+              datosFila += '<td style="min-height: 24px;  min-width: 7px;"><img src="views/img/question-icon.png" alt="" ></td>';
+            }
           }//termino for por columna
           $('#fila'+fila).html(datosFila); //se reemplaza la informacion de las columnas a la fila actual
         }//termino for por fila

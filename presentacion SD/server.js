@@ -404,8 +404,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
   console.log('posJugador '+socket.nickname+' es '+posJugador);
   var tableroAMostrar;
   if (sala.jugadores.length==1){
-    console.log(sala.nombre);
-    console.log(diccionarioSalaTablero[sala.nombre]);
+    //console.log(sala.nombre);
+    //console.log(diccionarioSalaTablero[sala.nombre]);
     return diccionarioSalaTablero[sala.nombre]; 
   }
 
@@ -422,8 +422,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -436,8 +436,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -454,8 +454,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -472,8 +472,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -486,8 +486,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -515,8 +515,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -538,8 +538,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -561,8 +561,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       } 
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -584,8 +584,8 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
           }
         }
       }  
-      console.log(sala.nombre+' : '+socket.nickname);
-      console.log(tableroAMostrar);
+      //console.log(sala.nombre+' : '+socket.nickname);
+      //console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -1115,9 +1115,11 @@ function usuarioDesconectado(socket){
           for (var clave in salasPosicion) delete salasPosicion[clave];*/
 
           salas = []; //se resetea la lista de salas
+          salasPorDefecto=[];
           salasTablero={};
           salasPosicion={};
-          agregarSala('porDefecto',salas, salasPosicion);
+          salasPorDefecto.push('salaPorDefecto_'+salasPorDefecto.length)
+          agregarSala(salasPorDefecto[salasPorDefecto.length-1],salas, salasPosicion); //siempre uso el de la ultima posicion
           //se debe a que si todos se deslogean, el juego en si se resetea
         }
 

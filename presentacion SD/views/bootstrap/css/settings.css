@@ -25,7 +25,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
 #mensajeChat{
     max-width: 45em;
     margin-left: 10px;
-
+    margin-bottom: 10px;
 }
 
 #panelConectados{
@@ -47,7 +47,6 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
 {
 	margin-left: 650px;
     margin-top: -150px;
-
 }
 
 #botonLogout
@@ -70,6 +69,7 @@ top (arriba), bottom (abajo), left (izquierda) y right;*/
   /*overflow-y: auto;
   margin-top: 350px;*/
   margin-left: 10px;
+  margin-top: -20px;
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
