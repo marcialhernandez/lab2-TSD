@@ -10,11 +10,13 @@ var bodyParser = require('body-parser')
   , salasTablero={} //diccionario que tiene nombreSala:Tablero
   , salasPosicion={} //diccionario que tiene nombreSala:posicionListaDeSalas
   , nickSocket={} //diccionario que tiene los nombre:socket
+  , salasPorDefecto=[] //lista de salas por defecto que se iran acumulando por cada 4 jugadores ingresados
   //cada sala tiene un nombre asociado a una lista de usuarios activos
   , mensajeAEnviar
   , mensajeDeVuelta;
 
-agregarSala('porDefecto',salas, salasPosicion);
+salasPorDefecto.push('salaPorDefecto_'+salasPorDefecto.length)
+agregarSala(salasPorDefecto[salasPorDefecto.length-1],salas, salasPosicion); //siempre uso el de la ultima posicion
 
 app.use("/views", express.static(__dirname + '/views'));
 
@@ -100,8 +102,29 @@ app.get('/', function(req, res){
         nickSocket[socket.nickname]=socket;
         // Agregamos al usuario al arreglo de conectados
         nickNamesUsados.push(socket.nickname);
-        socket.join(salas[0].nombre); //se ingresa a la sala por defecto
-        socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+
+        
+
+         //este corresponde al tamanio de la lista de conectados antes de pertenecer a la lista
+        //-----------------------------------------------------------
+        //si hay 4 en la sala por defecto, se debe crear otra sala por defecto
+        if (salas[salasPosicion[salasPorDefecto[salasPorDefecto.length-1]]].jugadores.length==4) {
+          //se crea una nueva sala por defecto que se apila a la lista de salas por defecto
+          //ademas se ingresa esta sala al diccionario de salas versus posicion de la lista de salas
+          salasPorDefecto.push('salaPorDefecto_'+salasPorDefecto.length)
+          agregarSala(salasPorDefecto[salasPorDefecto.length-1],salas, salasPosicion); //siempre uso el de la ultima posicion
+          //una vez hecha la sala, se le asigna un nuevo tablero
+          asignarTablero(salasTablero, salasPorDefecto[salasPorDefecto.length-1]);
+        }
+
+        socket.join(salas[salasPosicion[salasPorDefecto[salasPorDefecto.length-1]]].nombre); //se ingresa a la sala por defecto
+        socket.salaActual=salas[salasPosicion[salasPorDefecto[salasPorDefecto.length-1]]].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
+
+        
+
+        //socket.join(salas[0].nombre); //se ingresa a la sala por defecto
+        //console.log('info:::'+salas[salasPosicion[salasPorDefecto[salasPorDefecto.length-1]]].jugadores);
+        //socket.salaActual=salas[0].nombre; //se crea un atributo salaActual al socket y se asocia su sala actual a este atributo
         //este corresponde al tamanio de la lista de conectados antes de pertenecer a la lista
         //-----------------------------------------------------------
         //si no hay nadie en la sala, el turno actual sera de la persona que acaba de ingresar
@@ -276,6 +299,18 @@ function cambioDeSala(socket){
       salasActivas();
     }
     else{
+
+      //si la sala ya tiene 4 jugadores
+      if(salas[salasPosicion[String(data)]].jugadores.length==4){
+        //no se puede cambiar de sala
+        mensajeAEnviar='[System]: No puedes cambiarte a la sala '+data+' ya tiene el max. de jugadores';
+        io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
+      }
+
+      //caso contrario, funciona todo con normalidad
+
+      else{
+
       //Se anuncia en la sala actual que ha salido de la sala
       mensajeAEnviar=socket.nickname+' ha salido de la sala';
       console.log(socket.nickname+' ha salido de la sala '+socket.salaActual);
@@ -301,7 +336,8 @@ function cambioDeSala(socket){
       //envio un mensaje a todos los conectados en la sala actual
       mensajeAEnviar=socket.nickname+' ha ingresado a la sala';
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
-    } 
+    }
+    }//fin else sobre la cantidad de jugadores sala 
     console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
     console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
     usuariosConectados(); //se actualiza la lista de conectados, para resetear en caso de que @ver este activo
