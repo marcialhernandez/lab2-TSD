@@ -150,8 +150,8 @@ app.get('/', function(req, res){
           io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar); 
         }
 
-        console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
-        console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
+        //console.log('jugador: '+socket.nickname+' esta en el siguiente tablero'); Test muestra tablero
+        //console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
         usuariosConectados(); //se actualizan los usuarios conectados
         salasActivas(); //se actualizan las salas activas
         infoUsuario(socket); //se actualiza la informacion del usuario
@@ -338,8 +338,8 @@ function cambioDeSala(socket){
       io.to(socket.salaActual).emit('receivingGeneralMessage', mensajeAEnviar);
     }
     }//fin else sobre la cantidad de jugadores sala 
-    console.log('jugador: '+socket.nickname+' esta en el siguiente tablero');
-    console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
+    //console.log('jugador: '+socket.nickname+' esta en el siguiente tablero'); Test muestra tablero
+    //console.log(salasTablero[socket.salaActual]); //Test! muestro el tablero de la sala actual
     usuariosConectados(); //se actualiza la lista de conectados, para resetear en caso de que @ver este activo
     infoUsuario(socket); //se actualiza la informacion del usuario
     tableroSalaActual(socket); //se actualiza el tablero actual
@@ -356,19 +356,25 @@ function salasActivas(){
   }
 
 //Emito la matriz que esta asociada a la sala que esta asociada al socket actual
-function tableroSalaActual(socket){
-      socket.emit('tableroSalaActual', mostrarTablero(salas[salasPosicion[socket.salaActual]],socket,salasTablero));
+function tableroSalaPersonal(socket){
+     socket.emit('tableroSalaActual', mostrarTablero(salas[salasPosicion[socket.salaActual]],socket,salasTablero));
     //socket.emit('tableroSalaActual', salasTablero[socket.salaActual]);
   }
 
+//tableroSalaActual nombre funcion a gestionar
+
+
 //Emito la matriz que esta asociada a la sala actual a todos los jugadores que estan en la sala
-function tableroActualizaSalaActual(socket){
-    io.to(socket.salaActual).emit('tableroSalaActual', salasTablero[socket.salaActual]);
-    /*  var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
+function tableroSalaActual(socket){
+    //io.to(socket.salaActual).emit('tableroSalaActual', salasTablero[socket.salaActual]);
+    var mensajeSalaActualizada='[System]:sala actualizada';
+var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
   for (var cadaJugador=0;cadaJugador<cantidadJugadores;cadaJugador++){
-    tableroSalaActual(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
+    tableroSalaPersonal(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
+    nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]].emit('receivingGeneralMessage', mensajeSalaActualizada);
+    //console.log(salasTablero[salas[salasPosicion[socket.salaActual]].nombre]); Test muestra tablero
     }
-  }*/
+
   }
 
 /*-------------------------------------------------------------------------
@@ -381,11 +387,23 @@ function tableroActualizaSalaActual(socket){
 //    this.posicionRatonAnterior='O'; //guarda la pos anterior, antes de haber pisado la casilla actual
 //    this.puntaje=10000;
 
+function copiaPorValor(matrizACopiar){
+  var nuevaMatriz=[];
+  for(var i=0;i<matrizACopiar.length;i++){
+    nuevaMatriz[i]=[].concat(matrizACopiar[i]);
+  }
+  return nuevaMatriz;
+}
+
+
 function mostrarTablero(sala,socket,diccionarioSalaTablero){
   //si la cantidad de jugadores en la sala actual es de 1
   var posJugador=sala.jugadores.indexOf(socket.nickname);
-  var tableroAMostrar=[];
+  console.log('posJugador '+socket.nickname+' es '+posJugador);
+  var tableroAMostrar;
   if (sala.jugadores.length==1){
+    console.log(sala.nombre);
+    console.log(diccionarioSalaTablero[sala.nombre]);
     return diccionarioSalaTablero[sala.nombre]; 
   }
 
@@ -394,22 +412,30 @@ function mostrarTablero(sala,socket,diccionarioSalaTablero){
   else if(sala.jugadores.length==2){
     //veo en que posicion esta el jugador actual en la lista de jugadores
     if(posJugador==0){
-      tableroAMostrar=diccionarioSalaTablero[sala.nombre];
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
       for (var x=0;x<10;x++){ //desde la fila 0
         for(var y=5;y<10;y++){ //pero desde la columna 5
-          tableroAMostrar[x][y]='X'; //oculto la informacion
+          if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+            tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
         }
       } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
     else{ //entonces la posicion del jugador es 1
-      tableroAMostrar=diccionarioSalaTablero[sala.nombre];
+      tableroAMostrar=copiaPorValor(diccionarioSalaTablero[sala.nombre]);//.slice(0); //se pasa una copia POR VALOR a tableroAMostrar, en caso de no poner .slice() se pasaria una copia por referencia
       for (var x=0;x<10;x++){ //desde la fila 0
-        for(var y=0;y<5;y++){ //pero desde la columna 0 hasta la 4 
-          tableroAMostrar[x][y]='X'; //oculto la informacion
+          for(var y=0;y<5;y++){ //pero desde la columna 0 hasta la 4 
+            if(tableroAMostrar[x][y] != '@' && tableroAMostrar[x][y] != 'S'){ //Si es arroba, no se reemplaza!!
+              tableroAMostrar[x][y]='X'; //oculto la informacion
+          }
         }
       } 
+      console.log(sala.nombre+' : '+socket.nickname);
+      console.log(tableroAMostrar);
       return tableroAMostrar;
     }
 
@@ -559,7 +585,8 @@ function requestForUp(socket){
 
         //infoUsuario(socket);
         actualizaJugadoresSala(socket);
-        tableroActualizaSalaActual(socket);
+        tableroSalaActual(socket);
+        //tableroActualizaSalaActual(socket);
 
         }
       
@@ -665,7 +692,8 @@ function requestForDown(socket){
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         //infoUsuario(socket);
         actualizaJugadoresSala(socket);
-        tableroActualizaSalaActual(socket);
+        tableroSalaActual(socket);
+        //tableroActualizaSalaActual(socket);
 
         }
     });
@@ -770,7 +798,8 @@ function requestForRight(socket){
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         //infoUsuario(socket);
         actualizaJugadoresSala(socket);
-        tableroActualizaSalaActual(socket);
+        tableroSalaActual(socket);
+        //tableroActualizaSalaActual(socket);
 
         }
     });
@@ -877,7 +906,8 @@ function requestForLeft(socket){
         //console.log('posicion nueva raton: '+salas[salasPosicion[socket.salaActual]].posicionRaton); <- Test!
         //infoUsuario(socket);
         actualizaJugadoresSala(socket);
-        tableroActualizaSalaActual(socket);
+        tableroSalaActual(socket);
+        //tableroActualizaSalaActual(socket);
       
         }
     });
@@ -909,6 +939,7 @@ function usuarioDesconectado(socket){
       //Si la sala antigua no queda vacia, envio el turno de esa sala a la persona que le toca jugar
       var confirmacion=true;
       if(salas[salasPosicion[socket.salaActual]].jugadores.length!=0){
+        tableroSalaActual(socket);
         nickSocket[salas[salasPosicion[socket.salaActual]].turnoActual].emit('turnoParaJugar', confirmacion);
       }
 
