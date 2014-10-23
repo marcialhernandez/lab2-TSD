@@ -374,11 +374,11 @@ function tableroSalaPersonal(socket){
 //Emito la matriz que esta asociada a la sala actual a todos los jugadores que estan en la sala
 function tableroSalaActual(socket){
     //io.to(socket.salaActual).emit('tableroSalaActual', salasTablero[socket.salaActual]);
-    var mensajeSalaActualizada='[System]:sala actualizada';
+    //var mensajeSalaActualizada='[System]:sala actualizada';
 var cantidadJugadores=salas[salasPosicion[socket.salaActual]].jugadores.length;
   for (var cadaJugador=0;cadaJugador<cantidadJugadores;cadaJugador++){
     tableroSalaPersonal(nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]]);
-    nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]].emit('receivingGeneralMessage', mensajeSalaActualizada);
+    //nickSocket[salas[salasPosicion[socket.salaActual]].jugadores[cadaJugador]].emit('receivingGeneralMessage', mensajeSalaActualizada);
     //console.log(salasTablero[salas[salasPosicion[socket.salaActual]].nombre]); Test muestra tablero
     }
 
